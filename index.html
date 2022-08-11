@@ -9,36 +9,39 @@
   <body>
     <h1>MOKEPON!</h1>
     <section id="select-pet">
-      <h2>Elige a tu mascota</h2>
       <div>
-        <label for="hipodoge">Hipodoge</label>
-        <input type="radio" name="pet" id="hipodoge">
-        
-        <label for="capipepo">Capipepo</label>
-        <input type="radio" name="pet" id="capipepo">
+        <h2>Elige a tu mascota</h2>
+        <div id="mokepon-div">
+          <label for="hipodoge">Hipodoge</label>
+          <input type="radio" name="pet" id="hipodoge">
+          
+          <label for="capipepo">Capipepo</label>
+          <input type="radio" name="pet" id="capipepo">
 
-        <label for="ratigueya">Ratigueya</label>
-        <input type="radio" name="pet" id="ratigueya">
-      </div>
-      <div>
-        <button type="button">Seleccionar</button>
+          <label for="ratigueya">Ratigueya</label>
+          <input type="radio" name="pet" id="ratigueya">
+        </div>
+        <div>
+          <button id="select-pet-button" type="button">Seleccionar</button>
+        </div>
       </div>
     </section>
     <section id="select-attack">
       <h2>Elige tu ataque</h2>
-      <p>Tu mascota tiene <span>3</span> vidas</p>
-      <p>La mascota del enemigo tiene <span>3</span> vidas</p>
-      <div>
-        <button type="button">Fuego</button>
-        <button type="button">Agua</button>
-        <button type="button">Planta</button>
+      <p>Tu <span id="actual-pet">mascota</span> tiene <span id="actual-pet-hp">3</span> vidas</p>
+      <p>El <span id="enemy-pet"></span> enemigo tiene <span id="enemy-pet-hp">3</span> vidas</p>
+      <div id="attacks">
+        <button id="fuego" type="button">Fuego</button>
+        <button id="agua" type="button">Agua</button>
+        <button id="Planta" type="button">Planta</button>
       </div>
     </section>
-    <section id="Messages">
-      <p>Tu mascota atacó con Fuego, el enemigo ataco con Tierra - Ganaste</p>
+    <section id="log">
+      <div id="messages">
+      </div>
     </section>
     <section id="">
-      <button type="button">Reiniciar</button>
+      <button id="restart-button" type="button">Reiniciar</button>
     </section>
   </body>
 </html>
