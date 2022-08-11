@@ -35,16 +35,27 @@ function selectPlayerPet() {
 
 
 function attack(arrPlayerAttack ,attackType) {
-    let pAtck = document.createElement('p');
-    pAtck.innerHTML = `Tu mascota atacó con ${attackType.innerHTML}`;
-    document.getElementById('messages').appendChild(pAtck);
+    function createMssg(mssg) {
+        let divMssg = document.getElementById('messages');
+        let p = document.createElement('p');
+        p.innerHTML = mssg;
+        divMssg.appendChild(p);
+    }
+    let playerAttck = attackType.innerHTML;
+    let playerAttckMssg = `Tu mascota atacó con ${playerAttck}`;
+    createMssg(playerAttckMssg);
 
-    let pEnemyAtck = document.createElement('p');
-    let randAttck = arrPlayerAttack[randNumb(0, arrPlayerAttack.length - 1)];
-    pEnemyAtck.innerHTML = `El enemigo atacó con ${randAttck.innerHTML}`;
-    let x = document.getElementById('messages');
-    setTimeout(function(){x.appendChild(pEnemyAtck)}, 1000);
-    // alert('attack ' + attackType);
+    let enemyAttck = arrPlayerAttack[randNumb(0, arrPlayerAttack.length - 1)].innerHTML;
+    let enemyAttckMssg = `El enemigo atacó con ${enemyAttck}`;
+    createMssg(enemyAttckMssg);
+    // setTimeout(function(){divMssg.appendChild(pEnemyAtck)}, 0);
+
+    if (playerAttck == enemyAttck) {
+        createMssg('Empatezzz');
+    } else if(playerAttck == 'Fuego' && enemyAttck == 'Planta') {
+       createMssg('Ganaste');
+    } else if
+    
 }
 
 
@@ -56,7 +67,6 @@ function start() {
         let playerAttack = arrPlayerAttack[i]
         playerAttack.addEventListener("click",
                         function(){attack(arrPlayerAttack, playerAttack)});
-
     }
     
     btnSelectPet.addEventListener("click", selectPlayerPet);
