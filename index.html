@@ -26,7 +26,7 @@
         </div>
       </div>
     </section>
-    <section id="select-attack">
+    <section id="select-attack" style="display: none;">
       <h2>Elige tu ataque</h2>
       <p>Tu <span id="actual-pet">mascota</span> tiene <span id="actual-pet-hp">3</span> vidas</p>
       <p>El <span id="enemy-pet"></span> enemigo tiene <span id="enemy-pet-hp">3</span> vidas</p>
@@ -37,10 +37,14 @@
       </div>
     </section>
     <section id="log">
-      <div id="messages" style="white-space: pre-wrap">
+      <div id="messages">
+        <p id="player-messages"></p>
+        <p id="enemy-messages"></p>
+        <p id="result-messages"></p>
+        <p id="final-message"></p>
       </div>
     </section>
-    <section id="">
+    <section id="restart" style="display: none;">
       <button id="restart-button" type="button">Reiniciar</button>
     </section>
   </body>
