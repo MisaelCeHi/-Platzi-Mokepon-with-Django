@@ -41,46 +41,28 @@ function selectPlayerPet() {
 
 
 function attack(arrPlayerAttack ,attackType) {
-    function createMssg(mssg, tagId) {
-        let divMssg = document.getElementById('log');
-        // divMssg.innerHTML += mssg + '\n';
-        tagId.innerHTML = mssg;
-        // divMssg.appendChild(p);
-    }
-
-    function mssgDelay(mssg, who) {
-        let playerMssg = document.getElementById('player-messages');
-        let enemyMssg = document.getElementById('enemy-messages');
-        let resultMssg = document.getElementById('result-messages');
-        let finalMssg = document.getElementById('final-message');
-        let timeDelay = 500;
-        switch (who) {
-            case 'player':
-                setTimeout(function() {createMssg(mssg, playerMssg)}, timeDelay);
-                break;
-            case 'enemy':
-                setTimeout(function() {createMssg(mssg, enemyMssg)}, timeDelay);
-                break;
-            case 'result':
-                setTimeout(function() {createMssg(mssg, resultMssg)}, timeDelay);
-                break;
-            case 'final':
-                setTimeout(function() {createMssg(mssg, finalMssg)}, timeDelay);
-                break;
-            default:
-                break;
+    function createMssg(mssg) {
+        let divMssg = document.getElementById('messages');
+        let pCreated = document.createElement('p');
+        let pMssgLog = document.getElementById('message-log');
+        
+        for (let c = 0; c < divMssg.childElementCount; c++) {
+            let child = divMssg.children[c];
+            child.remove();       
         }
+
+        pCreated.innerHTML = mssg;
+        setTimeout(function() {pMssgLog.innerHTML += mssg + '\n'}, 1000);
+        setTimeout(function() {divMssg.appendChild(pCreated)}, 1000);
     }
 
     let playerAttck = attackType.innerHTML;
     let playerAttckMssg = `Tu mascota atacó con ${playerAttck}`;
-    // createMssg(playerAttckMssg);
-    mssgDelay(playerAttckMssg, 'player');
+    createMssg(playerAttckMssg);
 
     let enemyAttck = arrPlayerAttack[randNumb(0, arrPlayerAttack.length - 1)].innerHTML;
     let enemyAttckMssg = `El enemigo atacó con ${enemyAttck}`;
-    mssgDelay(enemyAttckMssg, 'enemy');
-    
+    createMssg(enemyAttckMssg);
 
     let actualPetHp = document.getElementById('actual-pet-hp');
     let enemyPetHp = document.getElementById('enemy-pet-hp');
@@ -90,18 +72,18 @@ function attack(arrPlayerAttack ,attackType) {
     let enemyLostHp = 'El nemeigo pierde 1 de vida';
     
     if (playerAttck == enemyAttck) {
-        mssgDelay('Empate zzzzzz', 'result')
+        createMssg('Empate');
     } else if(playerAttck == 'Fuego' && enemyAttck == 'Planta') {
-        mssgDelay(enemyLostHp, 'result');
+        createMssg(enemyLostHp);
         hpEnemy--;
     } else if(playerAttck == 'Agua' && enemyAttck == 'Fuego') {
-        mssgDelay(enemyLostHp, 'result');
+        createMssg(enemyLostHp);
         hpEnemy--;
     } else if(playerAttck == 'Planta' && enemyAttck == 'Agua') {
-        mssgDelay(enemyLostHp, 'result');
+        createMssg(enemyLostHp);
         hpEnemy--;
     } else {
-        mssgDelay('Perdiste 1 de Vida', 'result');
+        createMssg('Perdiste 1 de Vida');
         hpPlayer--;
     }
 
@@ -110,15 +92,15 @@ function attack(arrPlayerAttack ,attackType) {
 
     if (hpPlayer <= 0 || hpEnemy <= 0){
         if (!hpPlayer) {
-            mssgDelay('Perdiste mamawebaso DEDICATE A OTRA COSA >:v', 'final');
+            createMssg('Perdiste Mamawebaso');
         } else if (!hpEnemy) {
-            mssgDelay('GANASTE gg ez pizi', 'final');
+            createMssg('GANASTE');
         }
 
         for (let j = 0; j < arrPlayerAttack.length; j++) {
             arrPlayerAttack[j].disabled = true;
         }
-        sectResrtartBtn.style.display = 'block';
+        setTimeout(function() {sectResrtartBtn.style.display = 'block'}, 1500);
     }
 }
 
@@ -132,9 +114,11 @@ function start() {
     let btnRestart = document.getElementById('restart-button')
 
     for (let i = 0; i < arrPlayerAttack.length; i++) {
-        let playerAttack = arrPlayerAttack[i]
-        playerAttack.addEventListener("click",
-                        function(){attack(arrPlayerAttack, playerAttack)});
+        let playerAttack = arrPlayerAttack[i];
+        setTimeout(() => {
+            playerAttack.addEventListener("click",
+                            function(){attack(arrPlayerAttack, playerAttack)});
+        }, 3000);
     }
     
     btnRestart.addEventListener('click', restart);
