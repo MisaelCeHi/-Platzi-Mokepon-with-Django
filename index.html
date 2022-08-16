@@ -5,47 +5,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="script/mokepon.js"></script>
+    <link rel="stylesheet" type="" href="style/main.css">
   </head>
   <body>
-    <h1>MOKEPON!</h1>
-    <section id="select-pet">
-      <div>
-        <h2>Elige a tu mascota</h2>
-        <div id="mokepon-div">
-          <label for="hipodoge">Hipodoge</label>
-          <input type="radio" name="pet" id="hipodoge">
-          
-          <label for="capipepo">Capipepo</label>
-          <input type="radio" name="pet" id="capipepo">
-
-          <label for="ratigueya">Ratigueya</label>
-          <input type="radio" name="pet" id="ratigueya">
-        </div>
+    <header>
+      <h1>MOKEPON! 🌱🔥🌊</h1>
+    </header>
+    <main>
+      <section id="select-pet" class="pet-selection">
         <div>
-          <button id="select-pet-button" type="button">Seleccionar</button>
+          <h2>Elige a tu mascota</h2>
+          <div id="mokepon-div">
+            <label for="hipodoge">Hipodoge</label>
+            <input type="radio" name="pet" id="hipodoge">
+            
+            <label for="capipepo">Capipepo</label>
+            <input type="radio" name="pet" id="capipepo">
+
+            <label for="ratigueya">Ratigueya</label>
+            <input type="radio" name="pet" id="ratigueya">
+          </div>
+          <div id="btn-select-div">
+            <button id="select-pet-button" type="button">Seleccionar</button>
+          </div>
         </div>
-      </div>
-    </section>
-    <section id="select-attack" style="display: none;">
-      <h2>Elige tu ataque</h2>
-      <p>Tu <span id="actual-pet">mascota</span> tiene <span id="actual-pet-hp">3</span> vidas</p>
-      <p>El <span id="enemy-pet"></span> enemigo tiene <span id="enemy-pet-hp">3</span> vidas</p>
-      <div id="attacks">
-        <button id="fuego" type="button">Fuego</button>
-        <button id="agua" type="button">Agua</button>
-        <button id="Planta" type="button">Planta</button>
-      </div>
-    </section>
-    <section id="log">
-      <div>
-        <!-- TODO: Buton that shows the message - log-->
-        <p id="message-log" style="white-space: pre-wrap;"></p>
-      </div>
-      <div id="messages">
-      </div>
-    </section>
-    <section id="restart" style="display: none;">
-      <button id="restart-button" type="button">Reiniciar</button>
-    </section>
+      </section>
+      <section id="select-attack" style="display: none;">
+        <h2>Elige tu ataque</h2>
+        <p id="log-player">Tu <span id="actual-pet">mascota</span> tiene <span id="actual-pet-hp">3</span> vidas</p>
+        <p id="log-enemy">El <span id="enemy-pet"></span> enemigo tiene <span id="enemy-pet-hp">3</span> vidas</p>
+        <div id="attacks">
+          <button id="fuego" type="button">Fuego</button>
+          <button id="agua" type="button">Agua</button>
+          <button id="planta" type="button">Planta</button>
+        </div>
+        <section id="log">
+          <div>
+            <!-- TODO: Buton that shows the message - log-->
+            <p id="message-log" style="white-space: pre-wrap;"></p>
+          </div>
+          <div id="messages">
+          </div>
+        </section>
+      </section>
+      <section id="restart" style="display: none;">
+        <button id="restart-button" type="button">Reiniciar</button>
+      </section>
+    </main>
   </body>
 </html>

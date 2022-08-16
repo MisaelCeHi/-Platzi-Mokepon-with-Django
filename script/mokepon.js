@@ -28,7 +28,7 @@ function selectPlayerPet() {
     let enemyPet = document.getElementById('enemy-pet');
 
     if (chosenMokepon) {
-        sectSelectAtck.style.display = 'block'
+        sectSelectAtck.style.display = 'flex'
         actualPet.innerHTML = chosenMokepon;
         enemyPet.innerHTML = enemyChosenPet;        
         alert(`Elegiste a ${chosenMokepon}`);
@@ -52,8 +52,8 @@ function attack(arrPlayerAttack ,attackType) {
         }
 
         pCreated.innerHTML = mssg;
-        setTimeout(function() {pMssgLog.innerHTML += mssg + '\n'}, 1000);
-        setTimeout(function() {divMssg.appendChild(pCreated)}, 1000);
+        setTimeout(function() {pMssgLog.innerHTML += mssg + '\n'}, 0);
+        setTimeout(function() {divMssg.appendChild(pCreated)}, 0);
     }
 
     let playerAttck = attackType.innerHTML;
@@ -100,7 +100,7 @@ function attack(arrPlayerAttack ,attackType) {
         for (let j = 0; j < arrPlayerAttack.length; j++) {
             arrPlayerAttack[j].disabled = true;
         }
-        setTimeout(function() {sectResrtartBtn.style.display = 'block'}, 1500);
+        setTimeout(function() {sectResrtartBtn.style.display = 'flex'}, 0);
     }
 }
 
