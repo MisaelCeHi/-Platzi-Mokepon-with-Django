@@ -6,7 +6,7 @@
   box-sizing: border-box;
 }
 
-body, header, main, h1, h2, section, #mokepon-div, #btn-select-div, #attacks {
+body, header, main, footer, h1, h2, section, #mokepon-div, #btn-select-div, #attacks {
   display: flex;
   width: 100vw;
 }
@@ -22,11 +22,11 @@ header {
 }
 
 main {
-  height: 90vh;
+  height: 85vh;
   flex-flow: column wrap;
 }
 
-h1, h2, #mokepon-div, #btn-select-div, #attacks {
+h1, h2, #mokepon-div, #btn-select-div, #attacks, footer, #log {
   flex-direction: column-reverse;
   align-items: center;
   justify-content: center;
@@ -40,7 +40,6 @@ h1 {
 
 #select-pet, #select-attack {
   height: inherit;
-  background-color: cyan;
   flex-flow: column wrap;
 }
 
@@ -75,22 +74,35 @@ h2 {
   background-position: left;
 }
 
+label:hover {
+  color: white;
+  opacity: 0.95;
+  zoom: 1.04;
+  filter: alpha(opacity=80);
+}
+
 label[for*="hipodoge"] {
   background-image: url('../resources/mokepons_mokepon_hipodoge_attack.png');
-  background-color: lightblue;
   box-shadow: inset -2.6vh 0 2vh var(--value) blue;
+}
+label[for*="hipodoge"]:hover, #hipodoge:checked + label {
+  background-color: lightblue;
 }
 
 label[for*="capipepo"] {
   background-image: url('../resources/mokepons_mokepon_capipepo_attack.png');
-  background-color: lightgreen;
   box-shadow: inset -2.6vh 0 2vh var(--value) green;
+}
+label[for*="capipepo"]:hover, #capipepo:checked + label {
+  background-color: yellowgreen;
 }
 
 label[for*="ratigueya"] {
   background-image: url('../resources/mokepons_mokepon_ratigueya_attack.png');
-  background-color: #FF3F74;
   box-shadow: inset -2.6vh 0 2vh var(--value) red;
+}
+label[for*="ratigueya"]:hover, #ratigueya:checked + label {
+  background-color: #FF3F74;
 }
 
 #mokepon-div input{
@@ -98,12 +110,12 @@ label[for*="ratigueya"] {
 }
 
 #btn-select-div, #attacks{
-  height: 25vh;
+  height: 20vh;
   flex-flow: row wrap;
 }
 
 #select-pet-button {
-  height:  calc((9vh + 12vw)/2);
+  height:  calc((9vh + 12vw)/3);
   width: calc((24vh + 33.1vw)/2);
   border-radius: calc((3vh + 10vw)/2);
   font-size: calc((4vh + 3.1vw)/2.5);
@@ -117,10 +129,14 @@ label[for*="ratigueya"] {
   align-self: center;
 }
 
-#log {
+#log div:first-child {
   overflow: hidden scroll;
   height: 30vh;
   width: 80vw;
   align-self: center;
   outline: .5rem burlywood double;
+}
+
+footer {
+  height: 5vh;
 }
