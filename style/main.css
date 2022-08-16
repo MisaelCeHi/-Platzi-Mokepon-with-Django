@@ -1,0 +1,126 @@
+@import url();
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, header, main, h1, h2, section, #mokepon-div, #btn-select-div, #attacks {
+  display: flex;
+  width: 100vw;
+}
+
+body {
+  flex-flow: column wrap;
+  height: 100vh;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+header {
+  height: 10vh;
+}
+
+main {
+  height: 90vh;
+  flex-flow: column wrap;
+}
+
+h1, h2, #mokepon-div, #btn-select-div, #attacks {
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+h1 {
+  font-size: calc((6vh + 3vw)/2.3);
+}
+
+
+#select-pet, #select-attack {
+  height: inherit;
+  background-color: cyan;
+  flex-flow: column wrap;
+}
+
+h2 {
+  height: calc((7vh + 3.1vw)/2);
+  font-size: calc((4vh + 3vw)/2.2);
+  background-color: yellow;
+  align-self: flex-start;
+}
+
+#mokepon-div {
+  height: 55vh; 
+  flex-flow: row wrap;
+  /* overflow-x: hidden;*/
+  justify-content: space-evenly;
+  align-content: space-evenly;
+  column-gap: 2vw;
+}
+
+#mokepon-div label {
+  --value: calc((1.5vh + 2vw)/5);
+  width: calc((24vh + 34vw)/2);
+  height: calc((24vh + 33vw)/2.1);
+  padding: var(--value);
+  border-radius: 20px;
+  writing-mode: tb;
+  font-size:  calc((4vh + 3.3vw)/2.1);
+
+  background-clip: border-box; 
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: left;
+}
+
+label[for*="hipodoge"] {
+  background-image: url('../resources/mokepons_mokepon_hipodoge_attack.png');
+  background-color: lightblue;
+  box-shadow: inset -2.6vh 0 2vh var(--value) blue;
+}
+
+label[for*="capipepo"] {
+  background-image: url('../resources/mokepons_mokepon_capipepo_attack.png');
+  background-color: lightgreen;
+  box-shadow: inset -2.6vh 0 2vh var(--value) green;
+}
+
+label[for*="ratigueya"] {
+  background-image: url('../resources/mokepons_mokepon_ratigueya_attack.png');
+  background-color: #FF3F74;
+  box-shadow: inset -2.6vh 0 2vh var(--value) red;
+}
+
+#mokepon-div input{
+  display: none;
+}
+
+#btn-select-div, #attacks{
+  height: 25vh;
+  flex-flow: row wrap;
+}
+
+#select-pet-button {
+  height:  calc((9vh + 12vw)/2);
+  width: calc((24vh + 33.1vw)/2);
+  border-radius: calc((3vh + 10vw)/2);
+  font-size: calc((4vh + 3.1vw)/2.5);
+}
+
+#fuego, #agua, #planta {
+  height:  calc((6vh + 8vw)/2);
+  width: calc((18vh + 24vw)/2);
+  border-radius: calc((3vh + 8vw)/2);
+  font-size: calc((4vh + 3.1vw)/2.5);
+  align-self: center;
+}
+
+#log {
+  overflow: hidden scroll;
+  height: 30vh;
+  width: 80vw;
+  align-self: center;
+  outline: .5rem burlywood double;
+}
