@@ -4,7 +4,6 @@
     <title>MOKEPON!</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="script/mokepon.js"></script>
     <link rel="stylesheet" type="" href="style/main.css">
   </head>
   <body>
@@ -16,14 +15,6 @@
         <div>
           <h2>Elige a tu mascota</h2>
           <div id="mokepon-div">
-            <input type="radio" name="pet" id="hipodoge">
-            <label for="hipodoge">Hipodoge</label>
-            
-            <input type="radio" name="pet" id="capipepo">
-            <label for="capipepo">Capipepo</label>
-
-            <input type="radio" name="pet" id="ratigueya">
-            <label for="ratigueya">Ratigueya</label>
           </div>
           <div id="btn-select-div">
             <button id="select-pet-button" type="button">Seleccionar</button>
@@ -32,10 +23,13 @@
       </section>
       <section id="select-attack" style="display: none;">
         <h2>Elige tu ataque</h2>
-        <p id="log-player">Tu <span id="actual-pet">mascota</span> tiene <span id="actual-pet-hp">3</span> vidas</p>
-        <p id="log-enemy">El <span id="enemy-pet"></span> enemigo tiene <span id="enemy-pet-hp">3</span> vidas</p>
-        <div id="attacks">
-          <button id="fuego" type="button">Fuego</button>
+        <p id="log-player">Tu <span id="actual-pet">mascota</span> tiene <span id="actual-pet-hp"></span> vidas</p>
+        <p id="log-enemy">El <span id="enemy-pet"></span> enemigo tiene <span id="enemy-pet-hp"></span> vidas</p>
+        <div id="attacks"> 
+          <button id="fuego" type="button">
+            Fuego
+            <p id="timer" >1</p>
+          </button>
           <button id="agua" type="button">Agua</button>
           <button id="planta" type="button">Planta</button>
         </div>
@@ -55,5 +49,6 @@
     <footer>
       <p>@Copyright - 2022</p>
     </footer>
+    <script src="script/mokepon.js"></script>
   </body>
 </html>

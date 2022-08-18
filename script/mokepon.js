@@ -1,59 +1,107 @@
-let hpPlayer = 3;
-let hpEnemy = 3;
+const divMokepon = document.getElementById('mokepon-div');
+const arrInpMokepon = document.getElementsByName('pet');
+const lblMokepon = document.getElementsByTagName('label')
+const sectSelectPet = document.getElementById('select-pet');
+const sectSelectAtck = document.getElementById('select-attack');
+const actualPet = document.getElementById('actual-pet');
+const enemyPet = document.getElementById('enemy-pet');
+const pMssgLog = document.getElementById('message-log');
+const divMssg = document.getElementById('messages');
+const actualPetHp = document.getElementById('actual-pet-hp');
+const enemyPetHp = document.getElementById('enemy-pet-hp');
+const sectResrtartBtn = document.getElementById('restart');
+const btnSelectPet = document.getElementById('select-pet-button');
+const arrPlayerAttack = document.getElementById('attacks').children;
+const btnRestart = document.getElementById('restart-button')
+const attackTimerP = document.getElementById('timer');
 
+let chosenMokepon, enemyChosenPet;
+
+//
+class Mokepon {
+    constructor(name, hp, arrAttack) {
+        this.name = name;
+        this.hp = hp;
+        this.arrAttack = arrAttack;
+    }
+}
+
+let arrMokepon = [];
+
+let hipodoge = new Mokepon('Hipodoge', 5, []);
+let capipepo = new Mokepon('Capipepo', 3, []);
+let ratigueya = new Mokepon('Ratigueya', 4, []);
+
+arrMokepon.push(hipodoge, ratigueya, capipepo);
+
+
+
+//
 function randNumb(min, max) {
     return Math.floor(Math.random() * (max-min + 1) + min)
 }
 
-
-function mokeponIsChecked(arrinput, arrlabel) {
-    /* Returns the text related to a cheked input. 
-    Receives an iterable as a parameter.*/
-    for (let i = 0; i < arrinput.length; i++) {
-        if(arrinput[i].checked) {
-            return arrlabel.item(i).innerHTML;
+//
+function timer(arg1, arg2) {
+    function add(val) {
+        attackTimerP.innerHTML = val;
+        if (attackTimerP.innerHTML == 0) {
+            arg2.style.background = "#ffffff";    
+        }
+    }
+    arg2.style.background = "#112f58";
+    let numb = 5;
+    do{
+        setTimeout(add, (5 - numb)*1000, numb);
+        numb--
+    } while(numb >= 0) 
+    return numb
+}
+//
+function mokeponIsChecked() {
+    // Returns the text related to a cheked input. 
+    for (let i = 0; i < arrInpMokepon.length; i++) {
+        if(arrInpMokepon[i].checked) {
+            return lblMokepon.item(i).innerHTML;
         }
     }
 }
 
 
 function selectPlayerPet() {
-    let sectSelectPet = document.getElementById('select-pet');
-    let sectSelectAtck = document.getElementById('select-attack');
-    let inpMokepon = document.getElementsByName('pet');
-    let lblMokepon = document.getElementsByTagName('label')
-    let chosenMokepon = mokeponIsChecked(inpMokepon, lblMokepon);
-    let enemyChosenPet = lblMokepon[randNumb(0, inpMokepon.length-1)].innerHTML
-    let actualPet = document.getElementById('actual-pet');
-    let enemyPet = document.getElementById('enemy-pet');
+    arrMokepon.forEach((moke) => {
+        if (moke.name == mokeponIsChecked()) {
+            chosenMokepon = moke;
+        }        
+    });
+    enemyChosenPet = arrMokepon[randNumb(0, arrInpMokepon.length-1)];
 
     if (chosenMokepon) {
         sectSelectAtck.style.display = 'flex'
-        actualPet.innerHTML = chosenMokepon;
-        enemyPet.innerHTML = enemyChosenPet;        
-        alert(`Elegiste a ${chosenMokepon}`);
-        alert(`El enemigo eligió ${enemyChosenPet}`);
+        actualPet.innerHTML = chosenMokepon.name;
+        enemyPet.innerHTML = enemyChosenPet.name;        
+        actualPetHp.innerHTML = chosenMokepon.hp;
+        enemyPetHp.innerHTML = enemyChosenPet.hp;
+        alert(`Elegiste a ${chosenMokepon.name}`);
+        alert(`El enemigo eligió ${enemyChosenPet.name}`);
         sectSelectPet.style.display = 'none';
     }else{
         alert('Elige algún mokepon');
     }
 }
 
-
-function attack(arrPlayerAttack ,attackType) {
-    function createMssg(mssg) {
-        let divMssg = document.getElementById('messages');
+function attack(attackType) {
+    function createMssg(mssg){
         let pCreated = document.createElement('p');
-        let pMssgLog = document.getElementById('message-log');
-        
+
         for (let c = 0; c < divMssg.childElementCount; c++) {
             let child = divMssg.children[c];
-            child.remove();       
+            child.remove();
         }
 
         pCreated.innerHTML = mssg;
-        setTimeout(function() {pMssgLog.innerHTML += mssg + '\n'}, 0);
-        setTimeout(function() {divMssg.appendChild(pCreated)}, 0);
+        divMssg.appendChild(pCreated)
+        pMssgLog.innerHTML += mssg + '\n'
     }
 
     let playerAttck = attackType.innerHTML;
@@ -61,13 +109,8 @@ function attack(arrPlayerAttack ,attackType) {
     createMssg(playerAttckMssg);
 
     let enemyAttck = arrPlayerAttack[randNumb(0, arrPlayerAttack.length - 1)].innerHTML;
-    let enemyAttckMssg = `El enemigo atacó con ${enemyAttck}`;
-    createMssg(enemyAttckMssg);
-
-    let actualPetHp = document.getElementById('actual-pet-hp');
-    let enemyPetHp = document.getElementById('enemy-pet-hp');
-    
-    let sectResrtartBtn = document.getElementById('restart');
+    let enemyAttckMssg = `El enemigo atacó con ${enemyAttck}`; 
+    createMssg(enemyAttckMssg); 
 
     let enemyLostHp = 'El nemeigo pierde 1 de vida';
     
@@ -75,53 +118,52 @@ function attack(arrPlayerAttack ,attackType) {
         createMssg('Empate');
     } else if(playerAttck == 'Fuego' && enemyAttck == 'Planta') {
         createMssg(enemyLostHp);
-        hpEnemy--;
+        enemyChosenPet.hp--;
     } else if(playerAttck == 'Agua' && enemyAttck == 'Fuego') {
         createMssg(enemyLostHp);
-        hpEnemy--;
+        enemyChosenPet.hp--;
     } else if(playerAttck == 'Planta' && enemyAttck == 'Agua') {
         createMssg(enemyLostHp);
-        hpEnemy--;
+        enemyChosenPet.hp--;
     } else {
         createMssg('Perdiste 1 de Vida');
-        hpPlayer--;
+        chosenMokepon.hp--;
     }
 
-    actualPetHp.innerHTML = hpPlayer;
-    enemyPetHp.innerHTML = hpEnemy;
+    actualPetHp.innerHTML = chosenMokepon.hp;
+    enemyPetHp.innerHTML = enemyChosenPet.hp;
 
-    if (hpPlayer <= 0 || hpEnemy <= 0){
-        if (!hpPlayer) {
+    if (chosenMokepon.hp <= 0 || enemyChosenPet.hp <= 0){
+        if (!chosenMokepon.hp) {
             createMssg('Perdiste Mamawebaso');
-        } else if (!hpEnemy) {
+        } else if (!enemyChosenPet.hp) {
             createMssg('GANASTE');
         }
 
-        for (let j = 0; j < arrPlayerAttack.length; j++) {
-            arrPlayerAttack[j].disabled = true;
-        }
-        setTimeout(function() {sectResrtartBtn.style.display = 'flex'}, 0);
+        Object.values(arrPlayerAttack).forEach((atck) => {
+            atck.disabled = true;
+        })
+
+        sectResrtartBtn.style.display = 'flex';
     }
 }
 
-function restart() {
-    location.reload();
-}
-
+//
 function start() {
-    let btnSelectPet = document.getElementById('select-pet-button');
-    let arrPlayerAttack = document.getElementById('attacks').children;
-    let btnRestart = document.getElementById('restart-button')
-
+    arrMokepon.forEach((moke) => {
+        let mokeId = moke.name.toLowerCase();
+        divMokepon.innerHTML += `            
+            <input type="radio" name="pet" id="${mokeId}">
+            <label for="${mokeId}">${moke.name}</label>`
+    })
     for (let i = 0; i < arrPlayerAttack.length; i++) {
         let playerAttack = arrPlayerAttack[i];
-        setTimeout(() => {
-            playerAttack.addEventListener("click",
-                            function(){attack(arrPlayerAttack, playerAttack)});
-        }, 3000);
-    }
-    
-    btnRestart.addEventListener('click', restart);
+        playerAttack.addEventListener("click", function(){
+            attack(playerAttack);
+            timer(attackTimerP, playerAttack);
+        });
+    }    
+    btnRestart.addEventListener('click', function(){location.reload()});
     btnSelectPet.addEventListener("click", selectPlayerPet);
 }
 
