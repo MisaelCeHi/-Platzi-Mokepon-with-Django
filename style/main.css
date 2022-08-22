@@ -74,12 +74,6 @@ h2 {
   background-position: left;
 }
 
-label:hover {
-  color: white;
-  opacity: 0.95;
-  zoom: 1.04;
-  filter: alpha(opacity=80);
-}
 
 label[for*="hipodoge"] {
   background-image: url('../resources/mokepons_mokepon_hipodoge_attack.png');
@@ -103,6 +97,14 @@ label[for*="ratigueya"] {
 }
 label[for*="ratigueya"]:hover, #ratigueya:checked + label {
   background-color: #FF3F74;
+}
+
+
+label:hover {
+  color: white;
+  opacity: 0.95;
+  zoom: 1.04;
+  filter: alpha(opacity=80);
 }
 
 #mokepon-div input{

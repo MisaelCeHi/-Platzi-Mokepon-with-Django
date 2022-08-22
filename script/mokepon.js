@@ -11,29 +11,67 @@ const actualPetHp = document.getElementById('actual-pet-hp');
 const enemyPetHp = document.getElementById('enemy-pet-hp');
 const sectResrtartBtn = document.getElementById('restart');
 const btnSelectPet = document.getElementById('select-pet-button');
+const divAttack = document.getElementById('attacks');
 const arrPlayerAttack = document.getElementById('attacks').children;
 const btnRestart = document.getElementById('restart-button')
-const attackTimerP = document.getElementById('timer');
+const arrPetDescription = document.getElementsByClassName('pet-description');
 
 let chosenMokepon, enemyChosenPet;
 
 //
+const atckGolpeNormal = ({
+    Name: 'Golpe Normal',
+    Type: 'Normal',
+    Cooldown: 2
+})
+
+const atckPlacaje = ({
+    Name: 'Placaje',
+    Type: 'Normal',
+    Cooldown: 2
+})
+
+const atckFuegoEterno = ({
+    Name: 'Fuego Eterno',
+    Type: 'Fuego',
+    Cooldown: 5
+})
+
+const atckSemillaDelEden = ({
+    Name: 'SemillaDelEden',
+    Type: 'Planta',
+    Cooldown: 4
+})
+
+const atckDiluvioDivino = ({
+    Name: 'DiluvioDivino',
+    Type: 'Agua',
+    Cooldown: 5
+})
+
+//
 class Mokepon {
-    constructor(name, hp, arrAttack) {
+    constructor(name, type, hp) {
         this.name = name;
+        this.type = type;
         this.hp = hp;
-        this.arrAttack = arrAttack;
+        this.arrAttack = [];
     }
 }
 
 let arrMokepon = [];
 
-let hipodoge = new Mokepon('Hipodoge', 5, []);
-let capipepo = new Mokepon('Capipepo', 3, []);
-let ratigueya = new Mokepon('Ratigueya', 4, []);
+let hipodoge = new Mokepon('Hipodoge', 'Agua', 5);
+let capipepo = new Mokepon('Capipepo', 'Planta', 3);
+let ratigueya = new Mokepon('Ratigueya', 'Fuego', 4);
 
 arrMokepon.push(hipodoge, ratigueya, capipepo);
-
+arrMokepon.forEach((moke)=>{
+    moke.arrAttack.push(atckPlacaje, atckGolpeNormal);
+    if (moke.type == 'Fuego') moke.arrAttack.push(atckFuegoEterno);
+    (moke.type == 'Agua') ? moke.arrAttack.push(atckDiluvioDivino): {} ;
+    (moke.type == 'Planta') && moke.arrAttack.push(atckSemillaDelEden);
+})
 
 
 //
@@ -42,17 +80,24 @@ function randNumb(min, max) {
 }
 
 //
-function timer(arg1, arg2) {
+function timer(argAtckBtn) {
     function add(val) {
         attackTimerP.innerHTML = val;
         if (attackTimerP.innerHTML == 0) {
-            arg2.style.background = "#ffffff";    
+            argAtckBtn.style.background = "#ffffff";
+            attackTimerP.innerHTML = atckName;
+            attackTimerP.disabled = false;
         }
     }
-    arg2.style.background = "#112f58";
-    let numb = 5;
+    
+    
+    let atckName = argAtckBtn.innerHTML;
+
+    let attackTimerP = document.getElementById(argAtckBtn.id);
+    argAtckBtn.disabled = true;
+    let numb = 3;
     do{
-        setTimeout(add, (5 - numb)*1000, numb);
+        setTimeout(add, (3 - numb)*1000, numb);
         numb--
     } while(numb >= 0) 
     return numb
@@ -100,33 +145,39 @@ function attack(attackType) {
         }
 
         pCreated.innerHTML = mssg;
-        divMssg.appendChild(pCreated)
+        pCreated.style.display = 'none';
+        divMssg.appendChild(pCreated);
         pMssgLog.innerHTML += mssg + '\n'
     }
+    let timming = 1000;
 
     let playerAttck = attackType.innerHTML;
     let playerAttckMssg = `Tu mascota atacó con ${playerAttck}`;
-    createMssg(playerAttckMssg);
+//    createMssg(playerAttckMssg);
+    setTimeout(createMssg, timming, playerAttckMssg);
 
     let enemyAttck = arrPlayerAttack[randNumb(0, arrPlayerAttack.length - 1)].innerHTML;
     let enemyAttckMssg = `El enemigo atacó con ${enemyAttck}`; 
-    createMssg(enemyAttckMssg); 
+    setTimeout(createMssg, timming, enemyAttckMssg);
+//    createMssg(enemyAttckMssg); 
 
     let enemyLostHp = 'El nemeigo pierde 1 de vida';
     
     if (playerAttck == enemyAttck) {
-        createMssg('Empate');
+        setTimeout(createMssg, timming, 'EMPATE');
+//        createMssg('Empate');
     } else if(playerAttck == 'Fuego' && enemyAttck == 'Planta') {
-        createMssg(enemyLostHp);
+        setTimeout(createMssg, timming, enemyLostHp);
+//        createMssg(enemyLostHp);
         enemyChosenPet.hp--;
     } else if(playerAttck == 'Agua' && enemyAttck == 'Fuego') {
-        createMssg(enemyLostHp);
+        setTimeout(createMssg, timming, enemyLostHp);
         enemyChosenPet.hp--;
     } else if(playerAttck == 'Planta' && enemyAttck == 'Agua') {
-        createMssg(enemyLostHp);
+        setTimeout(createMssg, timming, enemyLostHp);
         enemyChosenPet.hp--;
     } else {
-        createMssg('Perdiste 1 de Vida');
+        setTimeout(createMssg, timming, 'Pierdes 1 de vida');
         chosenMokepon.hp--;
     }
 
@@ -135,7 +186,8 @@ function attack(attackType) {
 
     if (chosenMokepon.hp <= 0 || enemyChosenPet.hp <= 0){
         if (!chosenMokepon.hp) {
-            createMssg('Perdiste Mamawebaso');
+            setTimeout(createMssg, timming, 'Perdiste Mamawebaso');
+//            createMssg('Perdiste Mamawebaso');
         } else if (!enemyChosenPet.hp) {
             createMssg('GANASTE');
         }
@@ -143,26 +195,47 @@ function attack(attackType) {
         Object.values(arrPlayerAttack).forEach((atck) => {
             atck.disabled = true;
         })
-
+        sectSelectAtck.style.display = 'none';
         sectResrtartBtn.style.display = 'flex';
     }
 }
 
 //
+function changeDefOver(arr) {
+    arr.style.display = 'flex';
+}
+
+//
 function start() {
+    /*  <div class="pet-description" style="display: none">
+        <p id="${mokeId}-name">Name: ${moke.name}</p>
+        <p id="${mokeId}-type">Typr: ${moke.type}</p>
+        <p id="${mokeId}-attack-set">Attacks: ${moke.arrAttack}</p>
+      </div>*/
     arrMokepon.forEach((moke) => {
         let mokeId = moke.name.toLowerCase();
         divMokepon.innerHTML += `            
             <input type="radio" name="pet" id="${mokeId}">
             <label for="${mokeId}">${moke.name}</label>`
+        
+        moke.arrAttack.forEach( mokeAtck => {
+            let mokeAtckId = mokeAtck.Type.toLowerCase();
+            divAttack.innerHTML += `
+            <button class="${mokeAtckId}" type="button">${mokeAtck.Name}</button> 
+            `;
+        });
+        
     })
+    
+
     for (let i = 0; i < arrPlayerAttack.length; i++) {
         let playerAttack = arrPlayerAttack[i];
         playerAttack.addEventListener("click", function(){
             attack(playerAttack);
-            timer(attackTimerP, playerAttack);
+            timer(playerAttack);
         });
-    }    
+    }
+
     btnRestart.addEventListener('click', function(){location.reload()});
     btnSelectPet.addEventListener("click", selectPlayerPet);
 }
