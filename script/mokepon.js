@@ -7,6 +7,9 @@ const actualPet = document.getElementById('actual-pet');
 const enemyPet = document.getElementById('enemy-pet');
 const pMssgLog = document.getElementById('message-log');
 const divMssg = document.getElementById('messages');
+const pPlayerMssg = document.getElementById('player-mssg');
+const pEnemyMssg = document.getElementById('enemy-mssg');
+const pFinalMssg = document.getElementById('final-mssg');
 const actualPetHp = document.getElementById('actual-pet-hp');
 const enemyPetHp = document.getElementById('enemy-pet-hp');
 const sectResrtartBtn = document.getElementById('restart');
@@ -155,15 +158,18 @@ function selectPlayerPet() {
 }
 
 function attack(index) {
-    function createMssg(mssg) {
-        let pCreated = document.createElement('p'); 
-        for (let c = 0; c < divMssg.childElementCount; c++) {
-            let child = divMssg.children[c];
-            child.remove();
-        } 
-        pCreated.innerHTML = mssg;
-        pCreated.style.display = 'none';
-        divMssg.appendChild(pCreated);
+    function createMssg(mssg, forWho) {
+
+        switch (forWho) {
+            case "player":
+                pPlayerMssg.innerHTML = mssg;
+                break;
+            case "enemy":
+                pEnemyMssg.innerHTML = mssg;
+            default:
+                pFinalMssg.innerHTML = mssg;
+                break;
+        }
         pMssgLog.innerHTML += mssg + '\n'
     } 
 
@@ -188,10 +194,10 @@ function attack(index) {
 
     let playerAttckMssg = `Tu mascota atacó con ${playerAtck.Name}`;
     if (chosenMokepon.hp > 0 && enemyChosenPet.hp > 0) {
-        enemyChosenPet.hp = enemyChosenPet.hp - playerAtck.Damage;
+        enemyChosenPet.hp -= playerAtck.Damage;
         enemyPetHp.innerHTML = enemyChosenPet.hp;
         let enemyLostHp = `El enemigo pierde ${playerAtck.Damage} de vida`;
-        createMssg(playerAttckMssg);
+        createMssg(playerAttckMssg, 'player');
         createMssg(enemyLostHp);
         (enemyChosenPet.hp <= 0) ? youLose() : {}
     } 
@@ -200,7 +206,7 @@ function attack(index) {
     if (enemyChosenPet.hp > 0 && chosenMokepon.hp > 0) {
         chosenMokepon.hp -= enemyAtck.Damage;
         actualPetHp.innerHTML = chosenMokepon.hp;
-        createMssg(enemyAtckMssg);
+        createMssg(enemyAtckMssg, 'enemy');
         createMssg(`Perdes ${enemyAtck.Damage} de vida`);
         (chosenMokepon.hp <= 0 ) ? youLose() : {}
     }

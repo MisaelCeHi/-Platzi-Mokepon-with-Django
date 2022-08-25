@@ -103,7 +103,7 @@ label[for*="ratigueya"]:hover, #ratigueya:checked + label {
 label:hover {
   color: white;
   opacity: 0.95;
-  zoom: 1.04;
+  zoom: 1.00;
   filter: alpha(opacity=80);
 }
 
@@ -131,12 +131,46 @@ label:hover {
   align-self: center;
 }
 
+#log {
+    flex-direction: column;
+}
+
 #log div:first-child {
-  overflow: hidden scroll;
-  height: 30vh;
+  display: flex;
   width: 80vw;
   align-self: center;
-  outline: .5rem burlywood double;
+/*  outline: .5rem burlywood double; */
+}
+
+.logBtn {
+    align-self: flex-start;
+}
+
+#history:hover p {
+    height: 30vh;
+    overflow: hidden scroll;
+    display: block;
+}
+
+#message-log {
+    display: none;
+}
+
+#messages {
+    height: 15vh;
+}
+
+#player-mssg, #enemy-mssg {
+    width: 75vw;
+    font-size: medium;    
+}
+
+#player-mssg {
+    text-align: left;
+}
+
+#enemy-mssg {
+    text-align: right;
 }
 
 footer {
