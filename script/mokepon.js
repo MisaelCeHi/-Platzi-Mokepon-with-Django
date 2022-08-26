@@ -102,6 +102,9 @@ class Mokepon {
             ArrowDown() { this.y += this.speed; }
             }
     }
+    render() {
+        //this.x.style.left = 
+    }
 
     update(keysPressed) {
         Object.entries(this.actions).forEach(([key, action]) =>
@@ -161,14 +164,13 @@ function mokeponIsChecked() {
     }
 }
 
-function drawPet() {
-    lienzo.clearRect(0, 0, map.width, map.height);
+function drawPet(mokeInMap) {
     lienzo.drawImage(
-        chosenMokepon.imageInMap,
-        parseInt(chosenMokepon.x) + 0.5,
-        parseInt(chosenMokepon.y) + 0.5,
-        chosenMokepon.ancho,
-        chosenMokepon.alto,
+        mokeInMap.imageInMap,
+        parseInt(mokeInMap.x) + 0.5,
+        parseInt(mokeInMap.y) + 0.5,
+        mokeInMap.ancho,
+        mokeInMap.alto,
     )
     //lienzo.patternQuality = 'best';
     //lienzo.antialias = 'default';
@@ -177,13 +179,16 @@ function drawPet() {
 }
 
 function moveMokepon() {
+    let winBase, winHeight;
+    winBase = window.innerWidth;
+    winHeight = window.innerHeight;
+    let winArea = winBase * winHeight;
+
     document.addEventListener("keydown", e => {
       if (preventedKeys.has(e.code)) {
         e.preventDefault();
       }      
-      keysPressed.add(e.code);
-        map.width = sectionMap.offsetWidth - 95;
-        map.height = sectionMap.offsetHeight - 90;
+      keysPressed.add(e.code); 
     });
     document.addEventListener("keyup", e => {
       keysPressed.delete(e.code);
@@ -192,10 +197,23 @@ function moveMokepon() {
     (function update() {
         requestAnimationFrame(update);
         chosenMokepon.update(keysPressed);
-        drawPet();
+        if (winArea != window.innerWidth * window.innerHeight) {
+        let hipo = ((map.width ** 2) + (map.height ** 2)) ** .5;
+            console.log(winArea, window.innerHeight, window.innerWidth, hipo);
+            winArea =  window.innerWidth * window.innerHeight;
+            if (map.width < 789 || window.innerWidth < 810) {
+                map.width = sectionMap.offsetWidth - 95;
+                map.height = sectionMap.offsetHeight - 95;
+            } else {
+                map.width = 790;
+                map.heigh = 580;
+            }
+        }
+        lienzo.clearRect(0, 0, map.width, map.height);
+        drawPet(enemyChosenPet);
+        drawPet(chosenMokepon);
     })();
-    drawPet()
-
+    //drawPet() 
 }
 
 function selectPlayerPet() {
@@ -224,8 +242,12 @@ function selectPlayerPet() {
         enemyPet.innerHTML = enemyChosenPet.name;
         sectSelectPet.style.display = 'none';
         sectionMap.style.display = 'flex';
-
-        drawPet();
+        map.width = 790;
+        map.height = 580;
+        
+        enemyChosenPet.x = randNumb(0, map.width - enemyChosenPet.ancho);
+        enemyChosenPet.y = randNumb(0, map.height - enemyChosenPet.alto);
+        drawPet(enemyChosenPet);
         moveMokepon();
 
         //sectSelectAtck.style.display = 'flex'

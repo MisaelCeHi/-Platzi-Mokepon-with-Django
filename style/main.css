@@ -183,4 +183,11 @@ footer {
 
 #map {
   border: 2px solid black;
+  max-width: 880px;
+  background-image: url('../resources/mokemap.png');
+  background-clip: border-box; 
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+
 }
