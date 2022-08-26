@@ -19,9 +19,26 @@ const arrPlayerAttack = document.getElementById('attacks').children;
 const btnRestart = document.getElementById('restart-button')
 const arrPetDescription = document.getElementsByClassName('pet-description');
 
+const keysPressed = new Set();
+const preventedKeys = new Set([
+    "ArrowUp",
+    "ArrowDown",
+    "ArrowLeft",
+    "ArrowRight",
+])
+
+const imageCapipepoSrc = "../resources/mokepons_mokepon_capipepo_attack.png";
+const imageRatigueyaSrc = "../resources/mokepons_mokepon_ratigueya_attack.png";
+const imageHipodogeSrc = "../resources/mokepons_mokepon_hipodoge_attack.png";
+
+const sectionMap = document.getElementById('explore-map');
+const map = document.getElementById('map');
 let chosenMokepon, enemyChosenPet;
+let lienzo = map.getContext("2d");
 
 //
+
+
 const atckGolpeNormal = ({
     Name: 'Golpe Normal',
     id: 'golpe-normal',
@@ -64,19 +81,40 @@ const atckDiluvioDivino = ({
 
 //
 class Mokepon {
-    constructor(name, type, hp) {
+    constructor(name, type, hp, photo) {
         this.name = name;
         this.type = type;
         this.hp = hp;
         this.arrAttack = [];
+        this.photo = photo;
+        this.speed = 2;
+        this.x = 20;
+        this.y = 30;
+        this.ancho = 150;
+        this.alto = 150;
+        this.imageInMap = new Image();
+        this.imageInMap.src = photo;
+
+        this.actions = {
+            ArrowLeft() { this.x -= this.speed; },
+            ArrowRight() { this.x += this.speed; },
+            ArrowUp() { this.y -= this.speed; },
+            ArrowDown() { this.y += this.speed; }
+            }
+    }
+
+    update(keysPressed) {
+        Object.entries(this.actions).forEach(([key, action]) =>
+            keysPressed.has(key) && action.call(this)
+        );
     }
 }
 
 let arrMokepon = [];
 
-let hipodoge = new Mokepon('Hipodoge', 'Agua', 15);
-let capipepo = new Mokepon('Capipepo', 'Planta', 15);
-let ratigueya = new Mokepon('Ratigueya', 'Fuego', 15);
+let hipodoge = new Mokepon('Hipodoge', 'Agua', 15, imageHipodogeSrc);
+let capipepo = new Mokepon('Capipepo', 'Planta', 15, imageCapipepoSrc);
+let ratigueya = new Mokepon('Ratigueya', 'Fuego', 15, imageRatigueyaSrc);
 
 arrMokepon.push(hipodoge, ratigueya, capipepo);
 arrMokepon.forEach((moke)=>{
@@ -85,8 +123,7 @@ arrMokepon.forEach((moke)=>{
     (moke.type == 'Agua') ? moke.arrAttack.push(atckDiluvioDivino): {} ;
     (moke.type == 'Planta') && moke.arrAttack.push(atckSemillaDelEden);
 })
-
-
+ 
 //
 function randNumb(min, max) {
     return Math.floor(Math.random() * (max-min + 1) + min)
@@ -101,8 +138,7 @@ function timer(argAtckBtn) {
             attackTimerP.innerHTML = atckName;
             attackTimerP.disabled = false;
         }
-    } 
-
+    }  
     console.log('enemyPet', enemyChosenPet.hp);
     console.log('playaPet', chosenMokepon.hp);
     let atckName = argAtckBtn.innerHTML;
@@ -125,6 +161,42 @@ function mokeponIsChecked() {
     }
 }
 
+function drawPet() {
+    lienzo.clearRect(0, 0, map.width, map.height);
+    lienzo.drawImage(
+        chosenMokepon.imageInMap,
+        parseInt(chosenMokepon.x) + 0.5,
+        parseInt(chosenMokepon.y) + 0.5,
+        chosenMokepon.ancho,
+        chosenMokepon.alto,
+    )
+    //lienzo.patternQuality = 'best';
+    //lienzo.antialias = 'default';
+    //lienzo.filter = 'default'
+    //lienzo.imageSmoothingEnabled = false;
+}
+
+function moveMokepon() {
+    document.addEventListener("keydown", e => {
+      if (preventedKeys.has(e.code)) {
+        e.preventDefault();
+      }      
+      keysPressed.add(e.code);
+        map.width = sectionMap.offsetWidth - 95;
+        map.height = sectionMap.offsetHeight - 90;
+    });
+    document.addEventListener("keyup", e => {
+      keysPressed.delete(e.code);
+    });
+
+    (function update() {
+        requestAnimationFrame(update);
+        chosenMokepon.update(keysPressed);
+        drawPet();
+    })();
+    drawPet()
+
+}
 
 function selectPlayerPet() {
     arrMokepon.forEach((moke) => {
@@ -151,7 +223,12 @@ function selectPlayerPet() {
         actualPet.innerHTML = chosenMokepon.name;
         enemyPet.innerHTML = enemyChosenPet.name;
         sectSelectPet.style.display = 'none';
-        sectSelectAtck.style.display = 'flex'
+        sectionMap.style.display = 'flex';
+
+        drawPet();
+        moveMokepon();
+
+        //sectSelectAtck.style.display = 'flex'
     }else{
         alert('Elige algún mokepon');
     }
@@ -211,12 +288,7 @@ function attack(index) {
         (chosenMokepon.hp <= 0 ) ? youLose() : {}
     }
 }
-
-//
-function changeDefOver(arr) {
-    arr.style.display = 'flex';
-}
-
+ 
 //
 function start() { 
     arrMokepon.forEach((moke) => {
