@@ -61,10 +61,29 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',
 ]
 
+CSRF_COOKIE_SECURE = True
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8000',
+    'http://127.0.0.1:8000/mokepon/<int:player_id>',
+    'http://localhost:8000',
+]
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+
 CORS_ALLOW_HEADERS = [
     'ultrablock-udid',
     'ultrablock-version',
-    ''
+    'X-CSRFToken',
+    'x-requested-with',
+    'content-type',
 ]
 
 ROOT_URLCONF = 'mokeponProject.urls'

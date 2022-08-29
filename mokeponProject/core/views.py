@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 # from django.urls import reverse
+
 from .models import Player
 
 
@@ -8,21 +9,20 @@ from .models import Player
 players = []
 
 
-def index(request):
-    print(players)
-    return render(request, 'core/index.html')
+def index(request): return render(request, 'core/index.html')
 
 
 def join(request):
     player = Player.objects.create()
     players.append(player)
-    print(player.id, request)
+
     return HttpResponse(player.id)
 
 
 def playerMokepon(request, player_id):
-    player = Player.objects.filter(,)
-    data = list(Player.objects.all().values())
-    print(players)
-    print('*******************')
-    return JsonResponse({"Players": data})
+    player = get_object_or_404(Player, pk=player_id)
+    body_unicode = request.body.decode('utf-8')
+    player.mokepon_set.create(name=body_unicode)
+    data = list(player.mokepon_set.all().values())
+    print(data)
+    return JsonResponse({'player': data})

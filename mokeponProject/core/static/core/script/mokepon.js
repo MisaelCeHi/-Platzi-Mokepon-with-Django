@@ -248,10 +248,9 @@ function selectPlayerPet() {
         sectSelectPet.style.display = 'none';
         sectionMap.style.display = 'flex';
         map.width = 790;
-        map.height = 580;
-
+        map.height = 580; 
         selectedMoke(chosenMokepon);
-        
+
         enemyChosenPet.x = randNumb(0, map.width - enemyChosenPet.ancho);
         enemyChosenPet.y = randNumb(0, map.height - enemyChosenPet.alto);
         drawPet(enemyChosenPet);
@@ -320,7 +319,12 @@ function attack(index) {
 }
 
 function joinGame() {
-    fetch("http://localhost:8000/join")
+    fetch("http://localhost:8000/join", {
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            "X-Requested-With": "XMLHttpRequest"
+        }
+    })
         .then(function(res) {
             // console.log(res)
             if (res.ok) {
@@ -350,16 +354,18 @@ function getCookie(name) {
 }
         
 function selectedMoke(moke) {
+    var csrftoken = getCookie('csrftoken');
     fetch(`http://localhost:8000/mokepon/${playerId}`, {
-        method: 'POST',
-        body: JSON.stringify({
-            mokepon: moke
-        }) ,
-        headers: {
-            'X-CSRFToken': getCookie('csrftoken'),
-            "X-Requested-With": "XMLHttpRequest"
+        method: "POST",
+        body: moke.name,
+        headers:{
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+            //"X-Requested-With": "XMLHttpRequest"
         }
-    })
+    }).then(function(resp) {
+            console.log(resp)
+        })
 }
 
 
