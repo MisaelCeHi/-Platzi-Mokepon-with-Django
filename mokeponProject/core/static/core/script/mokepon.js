@@ -38,9 +38,11 @@ const imageHipodogeSrc = hipoPic;
 const sectionMap = document.getElementById('explore-map');
 const map = document.getElementById('map');
 let chosenMokepon, enemyChosenPet;
-let playerId;
+let playerId = 0;
 let lienzo = map.getContext("2d");
-
+let moko; 
+let mokeponEnemys = [];
+let counter = 0;
 //
 
 
@@ -86,7 +88,8 @@ const atckDiluvioDivino = ({
 
 //
 class Mokepon {
-    constructor(name, type, hp, photo) {
+    constructor(name, type, hp, photo, id=null) {
+        this.id = id;
         this.name = name;
         this.type = type;
         this.hp = hp;
@@ -95,8 +98,8 @@ class Mokepon {
         this.speed = 2;
         this.x = 20;
         this.y = 30;
-        this.ancho = 150;
-        this.alto = 150;
+        this.ancho = 80;
+        this.alto = 80;
         this.imageInMap = new Image();
         this.imageInMap.src = photo;
 
@@ -172,15 +175,11 @@ function mokeponIsChecked() {
 function drawPet(mokeInMap) {
     lienzo.drawImage(
         mokeInMap.imageInMap,
-        parseInt(mokeInMap.x) + 0.5,
-        parseInt(mokeInMap.y) + 0.5,
+        parseInt(mokeInMap.x),
+        parseInt(mokeInMap.y),
         mokeInMap.ancho,
         mokeInMap.alto,
-    )
-    //lienzo.patternQuality = 'best';
-    //lienzo.antialias = 'default';
-    //lienzo.filter = 'default'
-    //lienzo.imageSmoothingEnabled = false;
+    ) 
 }
 
 function moveMokepon() {
@@ -199,34 +198,62 @@ function moveMokepon() {
       keysPressed.delete(e.code);
     });
 
-    (function update() {
-        requestAnimationFrame(update);
-        chosenMokepon.update(keysPressed);
-        if (winArea != window.innerWidth * window.innerHeight) {
-        let hipo = ((map.width ** 2) + (map.height ** 2)) ** .5;
-            console.log(winArea, window.innerHeight, window.innerWidth, hipo);
-            winArea =  window.innerWidth * window.innerHeight;
-            if (map.width < 789 || window.innerWidth < 810) {
-                map.width = sectionMap.offsetWidth - 95;
-                map.height = sectionMap.offsetHeight - 95;
-            } else {
-                map.width = 790;
-                map.heigh = 580;
-            }
+    (function update() { 
+        let xx = chosenMokepon.x ;
+        let yy = chosenMokepon.y;
+        //requestAnimationFrame(update);
+        (!counter) && (requestAnimationFrame(update), chosenMokepon.update(keysPressed));
+        if (map.width > window.innerWidth - 96 || map.width < 780 && winArea != window.innerWidth * window.innerHeight) {
+            map.width = window.innerWidth - 96;
+            map.height = map.width * 585 / 780;
+            winArea = window.innerHeight * window.innerWidth;
+            drawPet(enemyChosenPet);
+            drawPet(chosenMokepon);
+            //console.log(map.width, map.height);
         }
-        lienzo.clearRect(0, 0, map.width, map.height);
-        drawPet(enemyChosenPet);
-        drawPet(chosenMokepon);
-    })();
-    //drawPet() 
+
+        if (xx !== chosenMokepon.x || yy !== chosenMokepon.y) {
+            lienzo.clearRect(0, 0, map.width, map.height);
+            drawPet(enemyChosenPet);
+            drawPet(chosenMokepon);
+            collision(enemyChosenPet);
+            mokeponEnemys.forEach((enemon) => {
+                drawPet(enemon.mokepon);
+                collision(enemon.mokepon);
+            });
+            //sendPosition(chosenMokepon.x, chosenMokepon.y);
+        }
+    })(); 
 }
+
+function collision(whitEnemy) {
+    let topPet = chosenMokepon.y;
+    let bottomPet = chosenMokepon.y + chosenMokepon.alto;
+    let leftPet = chosenMokepon.x
+    let rightPet = chosenMokepon.x + chosenMokepon.ancho;
+
+    if (topPet > whitEnemy.y + enemyChosenPet.alto ||
+        bottomPet < whitEnemy.y ||
+        leftPet > whitEnemy.x + whitEnemy.ancho ||
+        rightPet < whitEnemy.x) return
+    else {
+        counter++
+        sectionMap.style.display = 'none';
+        sectSelectAtck.style.display = 'flex';
+        console.log('coission', chosenMokepon.actions, keysPressed, counter);
+    }
+}   
+
 
 function selectPlayerPet() {
     arrMokepon.forEach((moke) => {
         if (moke.name == mokeponIsChecked()) {
             chosenMokepon = moke;
+            //chosenMokepon = Object.create(moke);
         }        
     });
+    chosenMokepon.id = playerId
+    //console.log(playerId, chosenMokepon)
     enemyChosenPet = Object.assign({}, arrMokepon[randNumb(0, arrInpMokepon.length-1)]);
 
     if (chosenMokepon) {
@@ -241,19 +268,25 @@ function selectPlayerPet() {
             playerAttack.addEventListener("click", function(){
                 attack(i);
                 timer(playerAttack);
+                //sendAttacks(playerAttack.innerHTML);
             });
         }
         actualPet.innerHTML = chosenMokepon.name;
         enemyPet.innerHTML = enemyChosenPet.name;
         sectSelectPet.style.display = 'none';
         sectionMap.style.display = 'flex';
-        map.width = 790;
-        map.height = 580; 
-        selectedMoke(chosenMokepon);
+        // 790, 580
+        map.width = 780 ;
+        map.height = 585; 
+
+        joinGame();
+        //selectedMoke(chosenMokepon);
 
         enemyChosenPet.x = randNumb(0, map.width - enemyChosenPet.ancho);
         enemyChosenPet.y = randNumb(0, map.height - enemyChosenPet.alto);
         drawPet(enemyChosenPet);
+        drawPet(chosenMokepon);
+        //sendPosition(chosenMokepon.x, chosenMokepon.y)
         moveMokepon();
 
         //sectSelectAtck.style.display = 'flex'
@@ -318,23 +351,47 @@ function attack(index) {
     }
 }
 
+function sendAttacks(atck) {
+    fetch(`http://localhost:8000/mokepon/${playerId}/attacks`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+        body: JSON.stringify({attackck: atck,
+            mokepon: chosenMokepon.name, 
+            hp:chosenMokepon.hp})
+    })
+    .then(function(res) {
+        (res.ok) && (
+            res.text()
+            .then(function(puesta){
+                    console.log(puesta);
+            })
+        )    
+    })
+    
+}
+
 function joinGame() {
     fetch("http://localhost:8000/join", {
+        method: "POST",
         headers: {
             'X-CSRFToken': getCookie('csrftoken'),
-            "X-Requested-With": "XMLHttpRequest"
-        }
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(chosenMokepon)
     })
-        .then(function(res) {
-            // console.log(res)
-            if (res.ok) {
-                res.text()
-                    .then(function(respuesta) {
-                        console.log(respuesta);
-                        playerId = respuesta;
-                    })
-            }
-        })
+    .then(function(res) {
+        // console.log(res)
+        if (res.ok) {
+            res.text()
+                .then(function(respuesta) {
+                    console.log(respuesta);
+                    //playerId = respuesta;
+                })
+        }
+    }) 
 }
 
 function getCookie(name) {
@@ -363,11 +420,89 @@ function selectedMoke(moke) {
             'X-CSRFToken': csrftoken,
             //"X-Requested-With": "XMLHttpRequest"
         }
-    }).then(function(resp) {
-            console.log(resp)
-        })
+    })
 }
 
+function sendPosition(posX, posY) {
+    fetch(`http://localhost:8000/mokepon/${playerId}/position`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+        body: [posX, posY]
+    })
+    .then(function(res) {
+    if (res.ok) {
+        res.json()
+        .then(function({enemys}) {
+            console.log(enemys);
+            let finder1, finder2, finder;
+            enemys.forEach(enemy => {
+                console.log(enemy.name)
+                if (enemy.name == 'Capipepo') {
+                    finder = mokeponEnemys.findIndex((enemigo) => enemigo['owner'] === enemy.owner_id);
+                    let mkkpnCapi = new Mokepon('Capipepo', 'Planta', 15, imageCapipepoSrc, enemy.owner_id);
+                    mkkpnCapi.id = enemy.owner_id;
+                    mkkpnCapi.x = enemy.x;
+                    mkkpnCapi.y = enemy.y;
+                    if (finder !== -1) {
+                        mokeponEnemys.splice(finder, 1, {
+                        mokepon: mkkpnCapi,
+                        owner: enemy.owner_id
+                        })
+                    } else {
+                        mokeponEnemys.push({
+                        mokepon: mkkpnCapi,
+                        owner: enemy.owner_id
+                        })
+                    }
+                    console.log('Capipepo enemigo')
+                    //drawPet(mkkpnCapi)
+                }
+                else if (enemy.name == 'Hipodoge'){
+                    finder1 = mokeponEnemys.findIndex((enemigo) => enemigo['owner'] === enemy.owner_id);
+                    let mkkpnHipo = new Mokepon('Hipodoge', 'Agua', 14, imageHipodogeSrc, enemy.owner_id);
+                    mkkpnHipo.id = enemy.owner_id;
+                    mkkpnHipo.x = enemy.x;
+                    mkkpnHipo.y = enemy.y;
+                    if (finder1 !== -1) {
+                        mokeponEnemys.splice(finder1, 1, {
+                        mokepon: mkkpnHipo,
+                        owner: enemy.owner_id
+                        })
+                    } else {
+                        mokeponEnemys.push({
+                        mokepon: mkkpnHipo,
+                        owner: enemy.owner_id
+                        })
+                    }
+                    console.log('Hipodoge enemigo')
+                    //drawPet(mkkpnHipo)
+                }
+                else if (enemy.name == 'Ratigueya'){
+                    finder2 = mokeponEnemys.findIndex((enemigo) => enemigo['owner'] === enemy.owner_id);
+                    let mkkpnRati = new Mokepon('Ratigueya', 'Fuego', 16, imageRatigueyaSrc, enemy.owner_id);
+                    mkkpnRati.id = enemy.owner_id;
+                    mkkpnRati.x = enemy.x;
+                    mkkpnRati.y = enemy.y;
+                    if (finder2 !== -1) {
+                        mokeponEnemys.splice(finder2, 1, {
+                        mokepon: mkkpnRati,
+                        owner: enemy.owner_id
+                        })
+                    } else {
+                        mokeponEnemys.push({
+                        mokepon: mkkpnRati,
+                        owner: enemy.owner_id
+                        })
+                    }
+                    console.log('Ratigueya enemigo')
+                    //drawPet(mkkpnRati)
+                }
+            })}) 
+        }
+    })}
 
 //
 function start() { 
@@ -379,7 +514,7 @@ function start() {
 
     btnRestart.addEventListener('click', function(){location.reload()});
     btnSelectPet.addEventListener("click", selectPlayerPet);
-    joinGame()
+    //joinGame()
 } 
 
 window.addEventListener('load', start);
