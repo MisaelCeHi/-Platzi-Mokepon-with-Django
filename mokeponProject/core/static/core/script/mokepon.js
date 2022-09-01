@@ -221,7 +221,7 @@ function moveMokepon() {
                 drawPet(enemon.mokepon);
                 collision(enemon.mokepon);
             });
-            //sendPosition(chosenMokepon.x, chosenMokepon.y);
+            sendPosition(chosenMokepon.x, chosenMokepon.y);
         }
     })(); 
 }
@@ -248,15 +248,14 @@ function collision(whitEnemy) {
 function selectPlayerPet() {
     arrMokepon.forEach((moke) => {
         if (moke.name == mokeponIsChecked()) {
-            chosenMokepon = moke;
-            //chosenMokepon = Object.create(moke);
+            chosenMokepon = moke; 
         }        
     });
-    chosenMokepon.id = playerId
-    //console.log(playerId, chosenMokepon)
+
     enemyChosenPet = Object.assign({}, arrMokepon[randNumb(0, arrInpMokepon.length-1)]);
 
     if (chosenMokepon) {
+        joinGame();
         chosenMokepon.arrAttack.forEach(atck => {
             let atckClass = atck.Type.toLowerCase();
             divAttack.innerHTML += `
@@ -277,9 +276,7 @@ function selectPlayerPet() {
         sectionMap.style.display = 'flex';
         // 790, 580
         map.width = 780 ;
-        map.height = 585; 
-
-        joinGame();
+        map.height = 585;
         //selectedMoke(chosenMokepon);
 
         enemyChosenPet.x = randNumb(0, map.width - enemyChosenPet.ancho);
@@ -378,18 +375,19 @@ function joinGame() {
         method: "POST",
         headers: {
             'X-CSRFToken': getCookie('csrftoken'),
-            'X-Requested-With': 'XMLHttpRequest'
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify(chosenMokepon)
     })
     .then(function(res) {
         // console.log(res)
         if (res.ok) {
-            res.text()
-                .then(function(respuesta) {
-                    console.log(respuesta);
-                    //playerId = respuesta;
-                })
+            res.json()
+            .then(function(puesta){
+                console.log(puesta)
+                playerId = puesta.id
+                chosenMokepon.id = puesta.id
+            })
         }
     }) 
 }
@@ -424,16 +422,17 @@ function selectedMoke(moke) {
 }
 
 function sendPosition(posX, posY) {
-    fetch(`http://localhost:8000/mokepon/${playerId}/position`, {
+    fetch(`http://localhost:8000/mokepon/${playerId}`, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': getCookie('csrftoken'),
         },
-        body: [posX, posY]
+        body: JSON.stringify({posX, posY})
     })
     .then(function(res) {
-    if (res.ok) {
+        console.log(res)
+    /*if (res.ok) {
         res.json()
         .then(function({enemys}) {
             console.log(enemys);
@@ -502,7 +501,7 @@ function sendPosition(posX, posY) {
                 }
             })}) 
         }
-    })}
+    */})}
 
 //
 function start() { 

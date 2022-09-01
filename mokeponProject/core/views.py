@@ -1,6 +1,5 @@
 import json
 
-# from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 # from django.urls import reverse
 from django.views import View
@@ -20,17 +19,19 @@ class IndexView(TemplateView):
 
 class JoinView(View):
     def post(self, request, *args, **kwargs):
-        print(request.POST, request)
-        enemy = request.body.decode('utf-8')
-        enemy = json.loads(enemy)
-        model = Enemy.objects.create()
-        model.name = enemy['name']
-        model.type = enemy['type']
-        model.hp = enemy['hp']
-        print(dir(model))
-        return HttpResponse(model)
-#     Enemy = Enemy.objects.create()
-#     return HttpResponse(player.id)
+        player = request.body.decode('utf-8')
+        player = json.loads(player)
+        new_player = Enemy.objects.create(
+            name=player['name'],
+            type=player['type'],
+            hp=player['hp'],
+            posX=player['x'],
+            posY=player['y']
+        )
+        players.append(new_player)
+        print(players)
+        print('esta') if new_player in players else print('no esta')
+        return JsonResponse(new_player.to_dict())
 
 # def playerMokepon(request, player_id):
 #     player = get_object_or_404(Player, pk=player_id)
@@ -39,8 +40,21 @@ class JoinView(View):
 #     data = list(player.mokepon_set.all().values())
 #
 #     return JsonResponse({'player': data})
-#
-#
+
+
+class EnemyPositionView(View):
+    def get(self, request, *args, **kwargs):
+        print('-------------------', request)
+        return HttpResponse('get')
+
+    def post(self, request, player_id):
+        coords = json.loads(request.body)
+        for player in players:
+            if player_id == player.id:
+                player.posX, player.posY = coords['posX'], coords['posY']
+        print(players, request.body)
+        enemys = [nemy.to_dict() for nemy in players if nemy.id != player_id]
+        return HttpResponse(enemys)
 # def playerPosition(request, player_id):
 #     player = get_object_or_404(Player, pk=player_id)
 #     body_unicode = request.body.decode('utf-8')
@@ -52,7 +66,7 @@ class JoinView(View):
 #         players.append(player)
 #     else:
 #         players.append(player)
-#     # print(request.body, coords, player.posX, player.posY, player.id, player,
+#     print(request.body, coords, player.posX, player.posY, player.id, player,
 #     #      players)
 #     enemys = []
 #     for p in players:

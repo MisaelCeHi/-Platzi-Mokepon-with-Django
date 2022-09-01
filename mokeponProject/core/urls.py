@@ -6,8 +6,8 @@ app_name = "core"
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('join', views.JoinView.as_view(), name='join'),
-    # path('mokepon/<int:player_id>', views.playerMokepon,
-    #     name='playerMokepon'),
+    path('mokepon/<int:player_id>', views.EnemyPositionView.as_view(),
+         name='playerMokepon'),
     # path('mokepon/<int:player_id>/position', views.playerPosition,
     #     name='playerPosition'),
     # path('mokepon/<int:player_id>/attacks', views.sendAttack,
