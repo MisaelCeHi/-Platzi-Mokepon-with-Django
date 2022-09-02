@@ -30,22 +30,16 @@ const preventedKeys = new Set([
 const imageCapipepoSrc = capiPic;
 const imageRatigueyaSrc = ratiPic;
 const imageHipodogeSrc = hipoPic;
-
-//const imageCapipepoSrc = '../images/mokepons_mokepon_capipepo_attack.png';
-//const imageRatigueyaSrc = '../images/mokepons_mokepon_ratigueya_attack.png';
-//const imageHipodogeSrc = '../images/mokepons_mokepon_hipodoge_attack.png';
-
+ 
 const sectionMap = document.getElementById('explore-map');
 const map = document.getElementById('map');
-let chosenMokepon, enemyChosenPet;
+let chosenMokepon, enemyChosenPet, playerAttack;
 let playerId = 0;
 let lienzo = map.getContext("2d");
 let moko; 
-let mokeponEnemys = [];
-let counter = 0;
+let mokeponEnemys = []; 
 //
-
-
+ 
 const atckGolpeNormal = ({
     Name: 'Golpe Normal',
     id: 'golpe-normal',
@@ -109,11 +103,7 @@ class Mokepon {
             ArrowUp() { this.y -= this.speed; },
             ArrowDown() { this.y += this.speed; }
             }
-    }
-    render() {
-        //this.x.style.left = 
-    }
-
+    } 
     update(keysPressed) {
         Object.entries(this.actions).forEach(([key, action]) =>
             keysPressed.has(key) && action.call(this)
@@ -200,26 +190,26 @@ function moveMokepon() {
 
     (function update() { 
         let xx = chosenMokepon.x ;
-        let yy = chosenMokepon.y;
-        //requestAnimationFrame(update);
-        (!counter) && (requestAnimationFrame(update), chosenMokepon.update(keysPressed));
+        let yy = chosenMokepon.y; 
+        (sectionMap.style.display == 'flex') && (
+            requestAnimationFrame(update), chosenMokepon.update(keysPressed)
+        );
         if (map.width > window.innerWidth - 96 || map.width < 780 && winArea != window.innerWidth * window.innerHeight) {
             map.width = window.innerWidth - 96;
             map.height = map.width * 585 / 780;
             winArea = window.innerHeight * window.innerWidth;
-            drawPet(enemyChosenPet);
-            drawPet(chosenMokepon);
-            //console.log(map.width, map.height);
+            //drawPet(enemyChosenPet);
+            drawPet(chosenMokepon); 
         }
 
         if (xx !== chosenMokepon.x || yy !== chosenMokepon.y) {
             lienzo.clearRect(0, 0, map.width, map.height);
-            drawPet(enemyChosenPet);
+            //drawPet(enemyChosenPet);
             drawPet(chosenMokepon);
-            collision(enemyChosenPet);
+            //collision(enemyChosenPet);
             mokeponEnemys.forEach((enemon) => {
-                drawPet(enemon.mokepon);
-                collision(enemon.mokepon);
+                drawPet(enemon);
+                collision(enemon);
             });
             sendPosition(chosenMokepon.x, chosenMokepon.y);
         }
@@ -236,11 +226,18 @@ function collision(whitEnemy) {
         bottomPet < whitEnemy.y ||
         leftPet > whitEnemy.x + whitEnemy.ancho ||
         rightPet < whitEnemy.x) return
-    else {
-        counter++
+    else { 
         sectionMap.style.display = 'none';
         sectSelectAtck.style.display = 'flex';
-        console.log('coission', chosenMokepon.actions, keysPressed, counter);
+        /*for (let i = 0; i < arrPlayerAttack.length; i++) {
+            let playerAttack = arrPlayerAttack[i];
+            playerAttack.addEventListener("click", function(){
+                attack(i);
+                timer(playerAttack);
+                //sendAttacks(playerAttack.innerHTML);
+            });
+        }*/
+        console.log('coission');
     }
 }   
 
@@ -259,17 +256,9 @@ function selectPlayerPet() {
         chosenMokepon.arrAttack.forEach(atck => {
             let atckClass = atck.Type.toLowerCase();
             divAttack.innerHTML += `
-            <button id="${atck.id}" class="${atckClass}" type="button">${atck.Name}</button>`;
+            <button id="${atck.id}" class="${atckClass}" onclick="sendAttacks('${atck.Name}')" type="button">${atck.Name}</button>`;
         });
 
-        for (let i = 0; i < arrPlayerAttack.length; i++) {
-            let playerAttack = arrPlayerAttack[i];
-            playerAttack.addEventListener("click", function(){
-                attack(i);
-                timer(playerAttack);
-                //sendAttacks(playerAttack.innerHTML);
-            });
-        }
         actualPet.innerHTML = chosenMokepon.name;
         enemyPet.innerHTML = enemyChosenPet.name;
         sectSelectPet.style.display = 'none';
@@ -281,7 +270,7 @@ function selectPlayerPet() {
 
         enemyChosenPet.x = randNumb(0, map.width - enemyChosenPet.ancho);
         enemyChosenPet.y = randNumb(0, map.height - enemyChosenPet.alto);
-        drawPet(enemyChosenPet);
+        //drawPet(enemyChosenPet);
         drawPet(chosenMokepon);
         //sendPosition(chosenMokepon.x, chosenMokepon.y)
         moveMokepon();
@@ -293,9 +282,8 @@ function selectPlayerPet() {
 }
 
 
-function attack(index) {
-    function createMssg(mssg, forWho) {
-
+function attack(index, enemy) {
+    function createMssg(mssg, forWho) { 
         switch (forWho) {
             case "player":
                 pPlayerMssg.innerHTML = mssg;
@@ -307,12 +295,11 @@ function attack(index) {
                 break;
         }
         pMssgLog.innerHTML += mssg + '\n'
-    } 
-
+    }
     function youLose() {
         if (chosenMokepon.hp <= 0) {
             setTimeout(createMssg, timming, 'Perdiste Mamawebaso'); 
-        } else if (enemyChosenPet.hp <= 0) {
+        } else if (enemy.hp <= 0) {
             setTimeout(createMssg, timming, 'GANASTE');
         }
 
@@ -320,26 +307,24 @@ function attack(index) {
             atck.disabled = true;
         }) 
         sectResrtartBtn.style.display = 'flex';
-    }
-
-    let timming =0;
+    } 
     let playerAtck = chosenMokepon.arrAttack[index];
-    let enemyAtck = enemyChosenPet.arrAttack[randNumb(0, 3 - 1)];
+    let enemyAtck = enemy.arrAttack[randNumb(0, 3 - 1)];
     actualPetHp.innerHTML = chosenMokepon.hp;
-    enemyPetHp.innerHTML = enemyChosenPet.hp;
+    enemyPetHp.innerHTML = enemy.hp;
 
     let playerAttckMssg = `Tu mascota atacó con ${playerAtck.Name}`;
-    if (chosenMokepon.hp > 0 && enemyChosenPet.hp > 0) {
-        enemyChosenPet.hp -= playerAtck.Damage;
-        enemyPetHp.innerHTML = enemyChosenPet.hp;
+    if (chosenMokepon.hp > 0 && enemy.hp > 0) {
+        enemy.hp -= playerAtck.Damage;
+        enemyPetHp.innerHTML = enemy.hp;
         let enemyLostHp = `El enemigo pierde ${playerAtck.Damage} de vida`;
         createMssg(playerAttckMssg, 'player');
         createMssg(enemyLostHp);
-        (enemyChosenPet.hp <= 0) ? youLose() : {}
+        (enemy.hp <= 0) ? youLose() : {}
     } 
 
     let enemyAtckMssg = `El enemigo atacó con ${enemyAtck.Name}`; 
-    if (enemyChosenPet.hp > 0 && chosenMokepon.hp > 0) {
+    if (enemy.hp > 0 && chosenMokepon.hp > 0) {
         chosenMokepon.hp -= enemyAtck.Damage;
         actualPetHp.innerHTML = chosenMokepon.hp;
         createMssg(enemyAtckMssg, 'enemy');
@@ -348,26 +333,42 @@ function attack(index) {
     }
 }
 
-function sendAttacks(atck) {
-    fetch(`http://localhost:8000/mokepon/${playerId}/attacks`, {
+
+let atckToSend = {atck: '', hp: 0, id: 0}
+
+function sendAttacks(attackName) {
+    // let form = new FormData(document.getElementById('form-f'));
+    atckToSend.atck = attackName
+    atckToSend.hp = chosenMokepon.hp
+    fetch(`http://localhost:8000/mokepon/${playerId}/attack`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
             'X-CSRFToken': getCookie('csrftoken'),
         },
-        body: JSON.stringify({attackck: atck,
-            mokepon: chosenMokepon.name, 
-            hp:chosenMokepon.hp})
+        body: JSON.stringify(atckToSend)
     })
     .then(function(res) {
-        (res.ok) && (
-            res.text()
-            .then(function(puesta){
-                    console.log(puesta);
-            })
-        )    
-    })
-    
+        return res.json()
+        }
+    ).then(function(data) {
+        (function update(){
+            if (Object.keys(data).length > 0) {
+                console.log(atckToSend, data)
+                if (Object.values(data)[0].id == atckToSend.id) {
+                    Object.keys(data).forEach((val) => delete data[val]);
+                    console.log(data)
+                } else {
+                atckToSend.id = Object.values(data)[0].id 
+                setTimeout(requestAnimationFrame, 2000, () => sendAttacks(attackName));
+                //requestAnimationFrame(() => sendAttacks(attackName));
+                console.log(data);
+                //Object.keys(data).forEach((val) => delete data[val])
+                //console.log(data)
+                }
+            }
+        })()
+    }) 
 }
 
 function joinGame() {
@@ -378,18 +379,15 @@ function joinGame() {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(chosenMokepon)
-    })
-    .then(function(res) {
-        // console.log(res)
+    }).then(function(res) { 
         if (res.ok) {
             res.json()
-            .then(function(puesta){
-                console.log(puesta)
+            .then(function(puesta){ 
                 playerId = puesta.id
                 chosenMokepon.id = puesta.id
             })
         }
-    }) 
+    })
 }
 
 function getCookie(name) {
@@ -406,20 +404,7 @@ function getCookie(name) {
         }
     }
     return cookieValue;
-}
-        
-function selectedMoke(moke) {
-    var csrftoken = getCookie('csrftoken');
-    fetch(`http://localhost:8000/mokepon/${playerId}`, {
-        method: "POST",
-        body: moke.name,
-        headers:{
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrftoken,
-            //"X-Requested-With": "XMLHttpRequest"
-        }
-    })
-}
+} 
 
 function sendPosition(posX, posY) {
     fetch(`http://localhost:8000/mokepon/${playerId}`, {
@@ -429,79 +414,31 @@ function sendPosition(posX, posY) {
             'X-CSRFToken': getCookie('csrftoken'),
         },
         body: JSON.stringify({posX, posY})
-    })
-    .then(function(res) {
-        console.log(res)
-    /*if (res.ok) {
+    }).then(function(res) { 
         res.json()
         .then(function({enemys}) {
-            console.log(enemys);
-            let finder1, finder2, finder;
-            enemys.forEach(enemy => {
-                console.log(enemy.name)
-                if (enemy.name == 'Capipepo') {
-                    finder = mokeponEnemys.findIndex((enemigo) => enemigo['owner'] === enemy.owner_id);
-                    let mkkpnCapi = new Mokepon('Capipepo', 'Planta', 15, imageCapipepoSrc, enemy.owner_id);
-                    mkkpnCapi.id = enemy.owner_id;
-                    mkkpnCapi.x = enemy.x;
-                    mkkpnCapi.y = enemy.y;
-                    if (finder !== -1) {
-                        mokeponEnemys.splice(finder, 1, {
-                        mokepon: mkkpnCapi,
-                        owner: enemy.owner_id
-                        })
-                    } else {
-                        mokeponEnemys.push({
-                        mokepon: mkkpnCapi,
-                        owner: enemy.owner_id
-                        })
-                    }
-                    console.log('Capipepo enemigo')
-                    //drawPet(mkkpnCapi)
+            mokeponEnemys = enemys.map((item) => {
+                new_enemy = new Mokepon(
+                    item.name, item.type, item.hp, '', item.id
+                );
+                if (new_enemy.name == 'Capipepo') {
+                    (new_enemy.imageInMap.src = capiPic);
+                    new_enemy.arrAttack = capipepo.arrAttack;
                 }
-                else if (enemy.name == 'Hipodoge'){
-                    finder1 = mokeponEnemys.findIndex((enemigo) => enemigo['owner'] === enemy.owner_id);
-                    let mkkpnHipo = new Mokepon('Hipodoge', 'Agua', 14, imageHipodogeSrc, enemy.owner_id);
-                    mkkpnHipo.id = enemy.owner_id;
-                    mkkpnHipo.x = enemy.x;
-                    mkkpnHipo.y = enemy.y;
-                    if (finder1 !== -1) {
-                        mokeponEnemys.splice(finder1, 1, {
-                        mokepon: mkkpnHipo,
-                        owner: enemy.owner_id
-                        })
-                    } else {
-                        mokeponEnemys.push({
-                        mokepon: mkkpnHipo,
-                        owner: enemy.owner_id
-                        })
-                    }
-                    console.log('Hipodoge enemigo')
-                    //drawPet(mkkpnHipo)
+                if (new_enemy.name == 'Hipodoge') {
+                    new_enemy.imageInMap.src = hipoPic;
+                    new_enemy.arrAttack = hipodoge.arrAttack;   
                 }
-                else if (enemy.name == 'Ratigueya'){
-                    finder2 = mokeponEnemys.findIndex((enemigo) => enemigo['owner'] === enemy.owner_id);
-                    let mkkpnRati = new Mokepon('Ratigueya', 'Fuego', 16, imageRatigueyaSrc, enemy.owner_id);
-                    mkkpnRati.id = enemy.owner_id;
-                    mkkpnRati.x = enemy.x;
-                    mkkpnRati.y = enemy.y;
-                    if (finder2 !== -1) {
-                        mokeponEnemys.splice(finder2, 1, {
-                        mokepon: mkkpnRati,
-                        owner: enemy.owner_id
-                        })
-                    } else {
-                        mokeponEnemys.push({
-                        mokepon: mkkpnRati,
-                        owner: enemy.owner_id
-                        })
-                    }
-                    console.log('Ratigueya enemigo')
-                    //drawPet(mkkpnRati)
+                if (new_enemy.name == 'Ratigueya') {
+                    new_enemy.imageInMap.src = ratiPic;
+                    new_enemy.arrAttack = ratigueya.arrAttack;
                 }
-            })}) 
-        }
-    */})}
+                new_enemy.x = item.posX;
+                new_enemy.y = item.posY;
+                return new_enemy
+            })
+        })
+    })}
 
 //
 function start() { 
@@ -509,11 +446,10 @@ function start() {
         let mokeId = moke.name.toLowerCase();
         divMokepon.innerHTML += `            
             <input type="radio" name="pet" id="${mokeId}">
-            <label for="${mokeId}">${moke.name}</label>`})
-
+            <label for="${mokeId}">${moke.name}</label>`
+    })
     btnRestart.addEventListener('click', function(){location.reload()});
-    btnSelectPet.addEventListener("click", selectPlayerPet);
-    //joinGame()
+    btnSelectPet.addEventListener("click", selectPlayerPet); 
 } 
 
 window.addEventListener('load', start);

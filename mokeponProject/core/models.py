@@ -44,3 +44,7 @@ class Enemy(PrintableModel):
     attack = models.CharField(max_length=25, default="")
     type = models.CharField(max_length=10, default="")
     hp = models.IntegerField(default=15)
+
+
+class Attack(PrintableModel):
+    pass

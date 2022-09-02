@@ -15,13 +15,11 @@
     </header>
     <main>
     <section id="select-pet" class="pet-selection">
-        <div>
+      <div>
         <h2>Elige a tu mascota</h2>
-          <form method="post" id="form-f">
-            <div id="mokepon-div">
-            </div>
-          </form>       
-        </div>
+          <div id="mokepon-div">
+          </div>
+      </div> 
       <div id="btn-select-div">
           <button id="select-pet-button" type="button">Seleccionar</button>
       </div>
@@ -38,8 +36,12 @@
         <h2>Elige tu ataque</h2>
         <p id="log-player">Tu <span id="actual-pet">mascota</span> tiene <span id="actual-pet-hp"></span> vidas</p>
         <p id="log-enemy">El <span id="enemy-pet"></span> enemigo tiene <span id="enemy-pet-hp"></span> vidas</p>
-        <div id="attacks"> 
-        </div>
+        <form method="post" id="form-f">
+          <fieldset>
+            <div id="attacks"> 
+            </div>
+          </fieldset>
+        </form>       
         <section id="log">
           <div id="history">
             <!-- TODO: Buton that shows the message - log-->
@@ -64,6 +66,7 @@
         var capiPic = "{% static 'core/images/capipepo.png' %}"
         var hipoPic = "{% static 'core/images/hipodoge.png' %}"
         var ratiPic = "{% static 'core/images/ratigueya.png' %}"
+    </script>
     </script>
     <script type="text/javascript" src="{% static 'core/script/mokepon.js' %}"></script>
   </body>

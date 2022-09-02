@@ -7,9 +7,9 @@ urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('join', views.JoinView.as_view(), name='join'),
     path('mokepon/<int:player_id>', views.EnemyPositionView.as_view(),
-         name='playerMokepon'),
+         name='enemy_position'),
     # path('mokepon/<int:player_id>/position', views.playerPosition,
     #     name='playerPosition'),
-    # path('mokepon/<int:player_id>/attacks', views.sendAttack,
-    #     name='sendAttack'),
+    path('mokepon/<int:player_id>/attack', views.AttackView.as_view(),
+         name='attack'),
 ]
