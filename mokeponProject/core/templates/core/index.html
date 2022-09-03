@@ -37,10 +37,8 @@
         <p id="log-player">Tu <span id="actual-pet">mascota</span> tiene <span id="actual-pet-hp"></span> vidas</p>
         <p id="log-enemy">El <span id="enemy-pet"></span> enemigo tiene <span id="enemy-pet-hp"></span> vidas</p>
         <form method="post" id="form-f">
-          <fieldset>
-            <div id="attacks"> 
-            </div>
-          </fieldset>
+          <div id="attacks"> 
+          </div>
         </form>       
         <section id="log">
           <div id="history">
@@ -63,6 +61,7 @@
       <p>@Copyright - 2022</p>
     </footer>
     <script>
+            //  var eventSource = new EventSource(`http://localhost:8000/mokepon/${playerId}/attack`);
         var capiPic = "{% static 'core/images/capipepo.png' %}"
         var hipoPic = "{% static 'core/images/hipodoge.png' %}"
         var ratiPic = "{% static 'core/images/ratigueya.png' %}"

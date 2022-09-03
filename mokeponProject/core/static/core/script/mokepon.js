@@ -35,52 +35,47 @@ const sectionMap = document.getElementById('explore-map');
 const map = document.getElementById('map');
 let chosenMokepon, enemyChosenPet, playerAttack;
 let playerId = 0;
-let lienzo = map.getContext("2d");
-let moko; 
+let lienzo = map.getContext("2d"); 
 let mokeponEnemys = []; 
-//
- 
+
+let allAttacks = [];
 const atckGolpeNormal = ({
     Name: 'Golpe Normal',
     id: 'golpe-normal',
     Type: 'Normal',
     Cooldown: 2,
     Damage: 3,
-})
-
+});
 const atckPlacaje = ({
     Name: 'Placaje',
     id: 'placaje',
     Type: 'Normal',
     Cooldown: 2,
     Damage: 3,
-})
-
+});
 const atckFuegoEterno = ({
     Name: 'Fuego Eterno',
     id: 'fuego-normal',
     Type: 'Fuego',
     Cooldown: 5,
     Damage: 4,
-})
-
+});
 const atckSemillaDelEden = ({
     Name: 'Semilla Del Eden',
     id: 'semilla-del-eden',
     Type: 'Planta',
     Cooldown: 4,
     Damage: 4,
-})
-
+});
 const atckDiluvioDivino = ({
     Name: 'Diluvio Divino',
     id: 'diluvio-divino',
     Type: 'Agua',
     Cooldown: 5,
     Damage: 4,
-})
-
-//
+});
+allAttacks.push(atckFuegoEterno, atckGolpeNormal, atckPlacaje, atckDiluvioDivino, atckSemillaDelEden)
+// 
 class Mokepon {
     constructor(name, type, hp, photo, id=null) {
         this.id = id;
@@ -123,13 +118,11 @@ arrMokepon.forEach((moke)=>{
     if (moke.type == 'Fuego') moke.arrAttack.push(atckFuegoEterno);
     (moke.type == 'Agua') ? moke.arrAttack.push(atckDiluvioDivino): {} ;
     (moke.type == 'Planta') && moke.arrAttack.push(atckSemillaDelEden);
-})
- 
+}) 
 //
 function randNumb(min, max) {
     return Math.floor(Math.random() * (max-min + 1) + min)
-}
-
+} 
 //
 function timer(argAtckBtn) {
     function add(val) {
@@ -140,8 +133,8 @@ function timer(argAtckBtn) {
             attackTimerP.disabled = false;
         }
     }  
-    console.log('enemyPet', enemyChosenPet.hp);
-    console.log('playaPet', chosenMokepon.hp);
+    //console.log('enemyPet', enemyChosenPet.hp);
+    //console.log('playaPet', chosenMokepon.hp);
     let atckName = argAtckBtn.innerHTML;
 
     let attackTimerP = document.getElementById(argAtckBtn.id);
@@ -152,7 +145,7 @@ function timer(argAtckBtn) {
         numb--
     } while(numb >= 0)  
 }
-//
+
 function mokeponIsChecked() {
     // Returns the text related to a cheked input. 
     for (let i = 0; i < arrInpMokepon.length; i++) {
@@ -197,8 +190,7 @@ function moveMokepon() {
         if (map.width > window.innerWidth - 96 || map.width < 780 && winArea != window.innerWidth * window.innerHeight) {
             map.width = window.innerWidth - 96;
             map.height = map.width * 585 / 780;
-            winArea = window.innerHeight * window.innerWidth;
-            //drawPet(enemyChosenPet);
+            winArea = window.innerHeight * window.innerWidth; 
             drawPet(chosenMokepon); 
         }
 
@@ -229,15 +221,17 @@ function collision(whitEnemy) {
     else { 
         sectionMap.style.display = 'none';
         sectSelectAtck.style.display = 'flex';
-        /*for (let i = 0; i < arrPlayerAttack.length; i++) {
+        for (let i = 0; i < 3; i++) {
             let playerAttack = arrPlayerAttack[i];
             playerAttack.addEventListener("click", function(){
-                attack(i);
+                //attack(i);
                 timer(playerAttack);
-                //sendAttacks(playerAttack.innerHTML);
-            });
-        }*/
-        console.log('coission');
+                allAttacks.forEach((atk) => {
+                    (atk.Name == playerAttack.innerHTML) && sendAttacks(atk);
+                })
+            }); 
+        }
+
     }
 }   
 
@@ -247,8 +241,7 @@ function selectPlayerPet() {
         if (moke.name == mokeponIsChecked()) {
             chosenMokepon = moke; 
         }        
-    });
-
+    }); 
     enemyChosenPet = Object.assign({}, arrMokepon[randNumb(0, arrInpMokepon.length-1)]);
 
     if (chosenMokepon) {
@@ -256,7 +249,7 @@ function selectPlayerPet() {
         chosenMokepon.arrAttack.forEach(atck => {
             let atckClass = atck.Type.toLowerCase();
             divAttack.innerHTML += `
-            <button id="${atck.id}" class="${atckClass}" onclick="sendAttacks('${atck.Name}')" type="button">${atck.Name}</button>`;
+            <button id="${atck.id}" class="${atckClass}" type="button">${atck.Name}</button>`;
         });
 
         actualPet.innerHTML = chosenMokepon.name;
@@ -265,23 +258,16 @@ function selectPlayerPet() {
         sectionMap.style.display = 'flex';
         // 790, 580
         map.width = 780 ;
-        map.height = 585;
-        //selectedMoke(chosenMokepon);
-
-        enemyChosenPet.x = randNumb(0, map.width - enemyChosenPet.ancho);
-        enemyChosenPet.y = randNumb(0, map.height - enemyChosenPet.alto);
-        //drawPet(enemyChosenPet);
+        map.height = 585; 
+        enemyChosenPet.x = randNumb(0, map.width - enemyChosenPet.ancho); 
+        enemyChosenPet.y = randNumb(0, map.height - enemyChosenPet.alto); 
         drawPet(chosenMokepon);
-        //sendPosition(chosenMokepon.x, chosenMokepon.y)
-        moveMokepon();
-
-        //sectSelectAtck.style.display = 'flex'
+        moveMokepon(); 
     }else{
         alert('Elige algún mokepon');
     }
 }
-
-
+ 
 function attack(index, enemy) {
     function createMssg(mssg, forWho) { 
         switch (forWho) {
@@ -332,42 +318,15 @@ function attack(index, enemy) {
         (chosenMokepon.hp <= 0 ) ? youLose() : {}
     }
 }
-
-
-let atckToSend = {atck: '', hp: 0, id: 0}
-
-function sendAttacks(attackName) {
-    // let form = new FormData(document.getElementById('form-f'));
-    atckToSend.atck = attackName
-    atckToSend.hp = chosenMokepon.hp
+ 
+function sendAttacks(attackInfo) { 
     fetch(`http://localhost:8000/mokepon/${playerId}/attack`, {
         method: 'POST',
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
             'X-CSRFToken': getCookie('csrftoken'),
         },
-        body: JSON.stringify(atckToSend)
-    })
-    .then(function(res) {
-        return res.json()
-        }
-    ).then(function(data) {
-        (function update(){
-            if (Object.keys(data).length > 0) {
-                console.log(atckToSend, data)
-                if (Object.values(data)[0].id == atckToSend.id) {
-                    Object.keys(data).forEach((val) => delete data[val]);
-                    console.log(data)
-                } else {
-                atckToSend.id = Object.values(data)[0].id 
-                setTimeout(requestAnimationFrame, 2000, () => sendAttacks(attackName));
-                //requestAnimationFrame(() => sendAttacks(attackName));
-                console.log(data);
-                //Object.keys(data).forEach((val) => delete data[val])
-                //console.log(data)
-                }
-            }
-        })()
+        body: JSON.stringify(attackInfo)
     }) 
 }
 
@@ -448,6 +407,19 @@ function start() {
             <input type="radio" name="pet" id="${mokeId}">
             <label for="${mokeId}">${moke.name}</label>`
     })
+    var eventSource = new EventSource(`http://localhost:8000/mokepon/${playerId}/attack`);
+    eventSource.onopen = function() {
+        console.log('Open Connection');
+    }
+    eventSource.onmessage = function(e) {
+        pEnemyMssg.innerHTML = 'Player atacó';
+        console.log(e.data)
+        console.log(e);
+    }
+    eventSource.onerror = function(e) {
+        console.log(e);
+    }
+    console.log('coission');
     btnRestart.addEventListener('click', function(){location.reload()});
     btnSelectPet.addEventListener("click", selectPlayerPet); 
 } 

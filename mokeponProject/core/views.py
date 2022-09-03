@@ -1,14 +1,14 @@
 import json
+from time import sleep
 
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
 # from django.urls import reverse
 from django.views import View
 from django.views.generic.base import TemplateView
-
+# from django.core.serializers.json import DjangoJSONEncoder
 from .models import Enemy, Attack
 
-
-# Create your views here.
+# Code here
 players = []
 attacks = {}
 
@@ -18,8 +18,8 @@ def is_ajax(request):
 
 
 class IndexView(TemplateView):
+    Attack.objects.all().delete()
     template_name = 'core/index.html'
-# def index(request): return render(request, 'core/index.html')
 
 
 class JoinView(View):
@@ -37,13 +37,6 @@ class JoinView(View):
 
         return JsonResponse(new_player.to_dict())
 
-# def playerMokepon(request, player_id):
-#     player = get_object_or_404(Player, pk=player_id)
-#     body_unicode = request.body.decode('utf-8')
-#     player.mokepon_set.create(name=body_unicode)
-# data = list(player.mokepon_set.all().values())
-#     return JsonResponse({'player': data})
-
 
 class EnemyPositionView(View):
     def post(self, request, player_id):
@@ -56,33 +49,29 @@ class EnemyPositionView(View):
         return JsonResponse({"enemys": enemys})
 
 
+def event_stream():
+    initial_data = ''
+    while True:
+        try:
+            data = Attack.objects.last().to_dict()
+        except AttributeError:
+            data = ''
+        else:
+            data = Attack.objects.last().to_dict()
+        if not initial_data == data:
+            yield "\ndata: {}\n\n".format(data)
+            initial_data = data
+        sleep(1)
+
+
 class AttackView(View):
     def get(self, request, *args, **kwargs):
-        print(request)
-        return HttpResponse('get')
+        response = StreamingHttpResponse(event_stream())
+        response['Content-Type'] = 'text/event-stream'
+        return response
 
     def post(self, request, player_id):
-        attack = json.loads(request.body.decode('utf-8'))
-        # new_attack = Attack()
-        print(attack['id'])
-        # try:
-        #     find_attack = Attack.objects.get(pk=attack['id'])
-        # except Attack.DoesNotExist:
-        #    new_attack.save()
-        #    attack['id'] = new_attack.id
-        #    print('new', new_attack)
-        #     pass
-        # else:
-        #    attack['id'] = find_attack.id
-        #    print('finded', find_attack)
-
-        # data = json.loads(request.body.decode('utf-8'))
-        attacks[player_id] = attack
-        print(attacks, attack['id'])
-        # enemy_attack = {k: v for k, v in attacks.items() if k != player_id}
-        return JsonResponse(attacks)
-# def sendAttack(request, player_id):
-#     player = get_object_or_404(Player, pk=player_id)
-#     attacks = request.body.decode('utf-8')
-#     print(attacks, player.id)
-#     return HttpResponse(request.body)
+        data = json.loads(request.body.decode('utf-8'))
+        new_attack = Attack.objects.create(name=data['Name'],
+                                           damage=data['Damage'])
+        return JsonResponse(new_attack.to_dict())
