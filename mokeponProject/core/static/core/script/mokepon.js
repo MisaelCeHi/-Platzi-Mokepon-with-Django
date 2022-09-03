@@ -327,7 +327,13 @@ function sendAttacks(attackInfo) {
             'X-CSRFToken': getCookie('csrftoken'),
         },
         body: JSON.stringify(attackInfo)
-    }) 
+    }).then(function(res) {
+            res.json()
+            .then(function(data) {
+                    //console.log('THEN ', data)
+                    pPlayerMssg.innerHTML = `Atacaste con ${data.name}`
+                })
+        }) 
 }
 
 function joinGame() {
@@ -412,14 +418,16 @@ function start() {
         console.log('Open Connection');
     }
     eventSource.onmessage = function(e) {
-        pEnemyMssg.innerHTML = 'Player atacó';
-        console.log(e.data)
-        console.log(e);
+        all_data = JSON.parse(e.data);
+        if (all_data.player_id != playerId) {
+            pEnemyMssg.innerHTML = `El enemigo uso ${all_data.name}`;
+        }
+        console.log('data: ', e)
     }
     eventSource.onerror = function(e) {
         console.log(e);
     }
-    console.log('coission');
+    // console.log('coission');
     btnRestart.addEventListener('click', function(){location.reload()});
     btnSelectPet.addEventListener("click", selectPlayerPet); 
 } 

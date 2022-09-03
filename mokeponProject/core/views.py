@@ -1,11 +1,11 @@
 import json
 from time import sleep
 
-from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
+from django.http import JsonResponse, StreamingHttpResponse
 # from django.urls import reverse
 from django.views import View
 from django.views.generic.base import TemplateView
-# from django.core.serializers.json import DjangoJSONEncoder
+from django.core.serializers.json import DjangoJSONEncoder
 from .models import Enemy, Attack
 
 # Code here
@@ -57,7 +57,8 @@ def event_stream():
         except AttributeError:
             data = ''
         else:
-            data = Attack.objects.last().to_dict()
+            data = json.dumps(Attack.objects.last().to_dict(),
+                              cls=DjangoJSONEncoder)
         if not initial_data == data:
             yield "\ndata: {}\n\n".format(data)
             initial_data = data
@@ -72,6 +73,14 @@ class AttackView(View):
 
     def post(self, request, player_id):
         data = json.loads(request.body.decode('utf-8'))
-        new_attack = Attack.objects.create(name=data['Name'],
-                                           damage=data['Damage'])
+        e = Enemy.objects.get(pk=player_id)
+        if e.attack_set.all().count() > 0:
+            e.attack_set.all().delete()
+            new_attack = e.attack_set.create(
+                name=data['Name'],
+                damage=data['Damage'])
+        else:
+            new_attack = e.attack_set.create(
+                name=data['Name'],
+                damage=data['Damage'])
         return JsonResponse(new_attack.to_dict())

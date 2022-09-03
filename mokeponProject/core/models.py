@@ -31,7 +31,6 @@ class Enemy(PrintableModel):
 
 
 class Attack(PrintableModel):
-    player_id = models.ForeignKey(Enemy, on_delete=models.CASCADE,
-                                  default=None)
+    player_id = models.ForeignKey(Enemy, on_delete=models.CASCADE)
     name = models.CharField(max_length=20, default="")
     damage = models.IntegerField(default=3)
