@@ -19,6 +19,7 @@ def is_ajax(request):
 
 class IndexView(TemplateView):
     Attack.objects.all().delete()
+    Enemy.objects.all().delete()
     template_name = 'core/index.html'
 
 
@@ -39,6 +40,8 @@ class JoinView(View):
 
 
 class EnemyPositionView(View):
+    print(Enemy.objects.all())
+
     def post(self, request, player_id):
         coords = json.loads(request.body)
         for player in players:
@@ -57,8 +60,12 @@ def event_stream():
         except AttributeError:
             data = ''
         else:
-            data = json.dumps(Attack.objects.last().to_dict(),
+            e = Enemy.objects.get(pk=data['player_id'])
+            full_data = data.copy()
+            full_data.update({'pet': e.name, 'hp': e.hp})
+            data = json.dumps(full_data,
                               cls=DjangoJSONEncoder)
+
         if not initial_data == data:
             yield "\ndata: {}\n\n".format(data)
             initial_data = data
@@ -66,11 +73,6 @@ def event_stream():
 
 
 class AttackView(View):
-    def get(self, request, *args, **kwargs):
-        response = StreamingHttpResponse(event_stream())
-        response['Content-Type'] = 'text/event-stream'
-        return response
-
     def post(self, request, player_id):
         data = json.loads(request.body.decode('utf-8'))
         e = Enemy.objects.get(pk=player_id)
@@ -83,4 +85,12 @@ class AttackView(View):
             new_attack = e.attack_set.create(
                 name=data['Name'],
                 damage=data['Damage'])
-        return JsonResponse(new_attack.to_dict())
+
+        full_data = new_attack.to_dict().copy()
+        full_data.update({'pet': e.name, 'hp': e.hp})
+        return JsonResponse(full_data)
+
+    def get(self, request, player_id):
+        response = StreamingHttpResponse(event_stream())
+        response['Content-Type'] = 'text/event-stream'
+        return response
